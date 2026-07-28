@@ -1,709 +1,174 @@
-const body =document.body;
+const header = document.querySelector("[data-header]");
+const menuToggle = document.querySelector("[data-menu-toggle]");
+const navigation = document.querySelector("[data-navigation]");
 
-const header =document.querySelector("[data-header]");
+const navLinks = [
+  ...document.querySelectorAll(".main-navigation a")
+];
 
-const openInvitationButton =document.querySelector("[data-open-invitation]");
-
-const reopenInvitationButton =document.querySelector("[data-reopen-invitation]");
-
-const menuToggle =document.querySelector("[data-menu-toggle]");
-
-const navigation =document.querySelector("[data-navigation]");
-
-const navLinks = [...document.querySelectorAll(".main-navigation a")];
-
-const quickLinks = [...document.querySelectorAll(".header-quick-navigation a")];
-
-const RSVP_ENDPOINT ="DIN_BACKEND_ADRESSE_KOMMER_HER";
-
-/*INVITASJON*/
-
-const openInvitation = () => {
-
-body.classList.remove("invitation-closed");
-
-body.classList.add("invitation-open");
-
-};
-
-const closeInvitation = () => {
-
-closeMenu();
-
-window.scrollTo({top: 0,behavior: "smooth"});
-
-window.setTimeout(() => {
-
-body.classList.remove(
-  "invitation-open"
+const heroBackground = document.querySelector(
+  ".hero-background"
 );
 
-body.classList.add(
-  "invitation-closed"
-);
 
-}, 350);
-
-};
-
-if (openInvitationButton) {
-
-openInvitationButton.addEventListener("click",openInvitation);
-
-}
-
-if (reopenInvitationButton) {
-
-reopenInvitationButton.addEventListener("click",closeInvitation);
-
-}
-
-/*HEADER*/
+/*
+  Endrer menyen når brukeren scroller.
+*/
 
 const updateHeader = () => {
+  if (!header) {
+    return;
+  }
 
-if (!header) {return;}
-
-header.classList.toggle("scrolled",window.scrollY > 30);
-
+  header.classList.toggle(
+    "scrolled",
+    window.scrollY > 40
+  );
 };
 
-window.addEventListener("scroll",updateHeader,{passive: true});
 
-/*MOBILMENY*/
+/*
+  Lukker mobilmenyen.
+*/
 
-function closeMenu() {
-
-if (!menuToggle || !navigation) {return;}
-
-menuToggle.setAttribute("aria-expanded","false");
-
-navigation.classList.remove("open");
-
-body.classList.remove("menu-open");
-
-}
-
-if (menuToggle && navigation) {
-
-menuToggle.addEventListener("click",() => {
-
-  const isOpen =
-    menuToggle.getAttribute(
-      "aria-expanded"
-    ) === "true";
+const closeMenu = () => {
+  if (!menuToggle || !navigation) {
+    return;
+  }
 
   menuToggle.setAttribute(
     "aria-expanded",
-    String(!isOpen)
+    "false"
   );
 
-  navigation.classList.toggle(
-    "open",
-    !isOpen
-  );
-
-  body.classList.toggle(
-    "menu-open",
-    !isOpen
-  );
-
-}
-
-);
-
-}
-
-navLinks.forEach((link) => {
-
-link.addEventListener("click",closeMenu);
-
-});
-
-window.addEventListener("resize",() => {
-
-if (window.innerWidth > 760) {
-  closeMenu();
-}
-
-});
-
-/*KORREKT SCROLLPLASSERING
-
-Vi beregner headerens faktiske høyde,slik at seksjonene alltid havner rettunder toppbaren.*/
-
-const getHeaderOffset = () => {
-
-if (!header) {return 0;}
-
-return header.getBoundingClientRect().height;
-
+  navigation.classList.remove("open");
+  document.body.classList.remove("menu-open");
 };
 
-const scrollToSection = (target) => {
 
-if (!target) {return;}
+/*
+  Åpner og lukker mobilmenyen.
+*/
 
-const targetPosition =target.getBoundingClientRect().top +window.scrollY -getHeaderOffset();
+if (menuToggle && navigation) {
+  menuToggle.addEventListener("click", () => {
 
-window.scrollTo({top: Math.max(targetPosition, 0),behavior: "smooth"});
+    const isOpen =
+      menuToggle.getAttribute("aria-expanded") ===
+      "true";
 
-};
-
-const internalJumpLinks = [...document.querySelectorAll('a[href^="#"]')];
-
-internalJumpLinks.forEach((link) => {
-
-link.addEventListener("click",(event) => {
-
-  const href =
-    link.getAttribute("href");
-
-
-  if (
-    !href ||
-    href === "#"
-  ) {
-    return;
-  }
-
-
-  const target =
-    document.querySelector(href);
-
-
-  if (!target) {
-    return;
-  }
-
-
-  event.preventDefault();
-
-  closeMenu();
-
-  scrollToSection(target);
-
-
-  if (
-    window.history &&
-    window.history.replaceState
-  ) {
-
-    window.history.replaceState(
-      null,
-      "",
-      href
+    menuToggle.setAttribute(
+      "aria-expanded",
+      String(!isOpen)
     );
 
-  }
+    navigation.classList.toggle(
+      "open",
+      !isOpen
+    );
 
+    document.body.classList.toggle(
+      "menu-open",
+      !isOpen
+    );
+  });
 }
 
-);
 
+/*
+  Lukker mobilmenyen når et menypunkt trykkes.
+*/
+
+navLinks.forEach((link) => {
+  link.addEventListener("click", closeMenu);
 });
 
-/*AKTIV NAVIGASJON*/
 
-const navigationSections = [...document.querySelectorAll("main section[id]")];
+/*
+  Header og parallax ved scrolling.
+*/
 
-const setActiveNavigation = (sectionId) => {
+window.addEventListener(
+  "scroll",
+  () => {
 
-const allLinks = [...navLinks,...quickLinks];
+    updateHeader();
 
-allLinks.forEach((link) => {
-
-const isActive =
-  link.getAttribute("href") ===
-  `#${sectionId}`;
-
-link.classList.toggle(
-  "active",
-  isActive
-);
-
-});
-
-};
-
-const updateActiveSection = () => {
-
-const headerOffset =getHeaderOffset();
-
-const referencePoint =window.scrollY +headerOffset +window.innerHeight * .22;
-
-let currentSection =navigationSections[0];
-
-navigationSections.forEach((section) => {
-
-  if (
-    section.offsetTop <=
-    referencePoint
-  ) {
-
-    currentSection = section;
-
-  }
-
-}
-
-);
-
-if (currentSection) {
-
-setActiveNavigation(
-  currentSection.id
-);
-
-}
-
-};
-
-window.addEventListener("scroll",updateActiveSection,{passive: true});
-
-window.addEventListener("resize",updateActiveSection);
-
-/*NEDTELLING*/
-
-const daysElement =document.querySelector("[data-days]");
-
-const hoursElement =document.querySelector("[data-hours]");
-
-const minutesElement =document.querySelector("[data-minutes]");
-
-const secondsElement =document.querySelector("[data-seconds]");
-
-const weddingDate =new Date("2027-09-18T13:30:00+02:00");
-
-const padNumber = (number,length = 2) => {
-
-return String(number).padStart(length,"0");
-
-};
-
-const updateCountdown = () => {
-
-if (!daysElement ||!hoursElement ||!minutesElement ||!secondsElement) {return;}
-
-const difference =weddingDate.getTime() -Date.now();
-
-if (difference <= 0) {
-
-daysElement.textContent = "000";
-hoursElement.textContent = "00";
-minutesElement.textContent = "00";
-secondsElement.textContent = "00";
-
-return;
-
-}
-
-const totalSeconds =Math.floor(difference / 1000);
-
-const days =Math.floor(totalSeconds / 86400);
-
-const hours =Math.floor((totalSeconds %86400) /3600);
-
-const minutes =Math.floor((totalSeconds %3600) /60);
-
-const seconds =totalSeconds % 60;
-
-daysElement.textContent =padNumber(days, 3);
-
-hoursElement.textContent =padNumber(hours);
-
-minutesElement.textContent =padNumber(minutes);
-
-secondsElement.textContent =padNumber(seconds);
-
-};
-
-updateCountdown();
-
-window.setInterval(updateCountdown,1000);
-
-/*SCROLLANIMASJONER*/
-
-const revealElements = [...document.querySelectorAll(".reveal")];
-
-if ("IntersectionObserver" in window) {
-
-const revealObserver =new IntersectionObserver((entries, observer) => {
-
-    entries.forEach((entry) => {
-
-      if (!entry.isIntersecting) {
-        return;
-      }
-
-      entry.target.classList.add(
-        "visible"
+    if (
+      heroBackground &&
+      window.innerWidth > 900
+    ) {
+      const offset = Math.min(
+        window.scrollY * 0.16,
+        90
       );
 
-      observer.unobserve(
-        entry.target
-      );
-
-    });
+      heroBackground.style.transform =
+        `translateY(${offset}px) scale(1.025)`;
+    }
 
   },
   {
-    threshold: .08
+    passive: true
   }
 );
 
-revealElements.forEach((element) => {
 
-  revealObserver.observe(
-    element
-  );
+/*
+  Markerer riktig menypunkt
+  basert på hvilken seksjon som vises.
+*/
 
-}
+const sections = [
+  ...document.querySelectorAll(
+    "main section[id]"
+  )
+];
 
-);
+if ("IntersectionObserver" in window) {
 
-} else {
+  const observer = new IntersectionObserver(
+    (entries) => {
 
-revealElements.forEach((element) => {
+      entries.forEach((entry) => {
 
-  element.classList.add(
-    "visible"
-  );
-
-}
-
-);
-
-}
-
-/*GAVEKNAPP*/
-
-const giftLink =document.querySelector("[data-gift-link]");
-
-if (giftLink) {
-
-giftLink.addEventListener("click",(event) => {
-
-  if (
-    giftLink.classList.contains(
-      "disabled-link"
-    )
-  ) {
-
-    event.preventDefault();
-
-  }
-
-}
-
-);
-
-}
-
-/*RSVP POPUP*/
-
-const rsvpModal =document.querySelector("[data-rsvp-modal]");
-
-const openRsvpButton =document.querySelector("[data-open-rsvp]");
-
-const closeRsvpButtons = [...document.querySelectorAll("[data-close-rsvp]")];
-
-const openRsvpModal = () => {
-
-if (!rsvpModal) {return;}
-
-rsvpModal.classList.add("open");
-
-rsvpModal.setAttribute("aria-hidden","false");
-
-body.classList.add("modal-open");
-
-window.setTimeout(() => {
-
-const firstField =
-  rsvpModal.querySelector(
-    "input, textarea"
-  );
-
-if (firstField) {
-  firstField.focus();
-}
-
-}, 350);
-
-};
-
-const closeRsvpModal = () => {
-
-if (!rsvpModal) {return;}
-
-rsvpModal.classList.remove("open");
-
-rsvpModal.setAttribute("aria-hidden","true");
-
-body.classList.remove("modal-open");
-
-if (openRsvpButton) {openRsvpButton.focus();}
-
-};
-
-if (openRsvpButton) {
-
-openRsvpButton.addEventListener("click",openRsvpModal);
-
-}
-
-closeRsvpButtons.forEach((button) => {
-
-button.addEventListener(
-  "click",
-  closeRsvpModal
-);
-
-});
-
-document.addEventListener("keydown",(event) => {
-
-if (event.key !== "Escape") {
-  return;
-}
-
-closeMenu();
-closeRsvpModal();
-
-});
-
-/*RSVP-SKJEMA*/
-
-const rsvpForm =document.querySelector("[data-rsvp-form]");
-
-const formStatus =document.querySelector("[data-form-status]");
-
-const setFormStatus = (message,type = "") => {
-
-if (!formStatus) {return;}
-
-formStatus.textContent =message;
-
-formStatus.className ="form-status";
-
-if (type) {
-
-formStatus.classList.add(
-  type
-);
-
-}
-
-};
-
-const formDataToObject = (formData) => {
-
-const result = {};
-
-formData.forEach((value, key) => {
-
-  result[key] = value;
-
-}
-
-);
-
-return result;
-
-};
-
-if (rsvpForm) {
-
-rsvpForm.addEventListener("submit",async (event) => {
-
-  event.preventDefault();
-
-
-  if (!rsvpForm.checkValidity()) {
-
-    rsvpForm.reportValidity();
-
-    return;
-
-  }
-
-
-  const submitButton =
-    rsvpForm.querySelector(
-      ".form-submit"
-    );
-
-
-  const formData =
-    new FormData(rsvpForm);
-
-
-  const payload =
-    formDataToObject(formData);
-
-
-  payload.submittedAt =
-    new Date().toISOString();
-
-
-  if (
-    RSVP_ENDPOINT ===
-    "DIN_BACKEND_ADRESSE_KOMMER_HER"
-  ) {
-
-    console.table(payload);
-
-    setFormStatus(
-      "Skjemaet fungerer, men står foreløpig i testmodus. Svaret er derfor ikke sendt ennå.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    submitButton.disabled =
-      true;
-
-    submitButton.textContent =
-      "Sender …";
-
-    setFormStatus(
-      "Sender svaret …"
-    );
-
-
-    const response =
-      await fetch(
-        RSVP_ENDPOINT,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify(payload)
+        if (!entry.isIntersecting) {
+          return;
         }
-      );
 
+        navLinks.forEach((link) => {
 
-    if (!response.ok) {
+          const linkTarget =
+            link.getAttribute("href");
 
-      throw new Error(
-        `Serveren svarte med status ${response.status}`
-      );
+          const sectionTarget =
+            `#${entry.target.id}`;
 
+          link.classList.toggle(
+            "active",
+            linkTarget === sectionTarget
+          );
+
+        });
+
+      });
+
+    },
+    {
+      rootMargin: "-40% 0px -50% 0px",
+      threshold: 0
     }
+  );
 
-
-    setFormStatus(
-      "Tusen takk! Svaret deres er registrert.",
-      "success"
-    );
-
-
-    rsvpForm.reset();
-
-
-    window.setTimeout(
-      closeRsvpModal,
-      2500
-    );
-
-  } catch (error) {
-
-    console.error(
-      "RSVP-feil:",
-      error
-    );
-
-
-    setFormStatus(
-      "Vi klarte ikke å sende svaret. Prøv igjen, eller ta kontakt med Pernille eller Andreas.",
-      "error"
-    );
-
-  } finally {
-
-    submitButton.disabled =
-      false;
-
-    submitButton.textContent =
-      "Send svar";
-
-  }
-
+  sections.forEach((section) => {
+    observer.observe(section);
+  });
 }
 
-);
 
-}
+/*
+  Sørger for at headeren har riktig
+  utseende allerede ved innlasting.
+*/
 
-updateHeader();updateActiveSection();/*GLIDENDE AKTIV MARKØR I HURTIGMENYEN*/
-
-const quickNavigation =document.querySelector("[data-quick-navigation]");
-
-let activeMarker = null;
-
-const createActiveMarker = () => {
-
-if (!quickNavigation) {return;}
-
-activeMarker =document.createElement("span");
-
-activeMarker.className ="header-active-marker";
-
-activeMarker.setAttribute("aria-hidden","true");
-
-quickNavigation.prepend(activeMarker);
-
-};
-
-const moveActiveMarker = () => {
-
-if (!quickNavigation ||!activeMarker) {return;}
-
-const activeLink =quickNavigation.querySelector("a.active");
-
-if (!activeLink) {
-
-activeMarker.style.opacity = "0";
-
-return;
-
-}
-
-const navigationRectangle =quickNavigation.getBoundingClientRect();
-
-const linkRectangle =activeLink.getBoundingClientRect();
-
-const markerX =linkRectangle.left -navigationRectangle.left +(linkRectangle.width -activeMarker.offsetWidth) /2;
-
-activeMarker.style.opacity = "1";
-
-activeMarker.style.transform =translate3d(${markerX}px, -50%, 0);
-
-};
-
-createActiveMarker();
-
-window.setTimeout(moveActiveMarker,100);
-
-window.addEventListener("resize",moveActiveMarker);
-
-/*Den eksisterende setActiveNavigation-funksjonenendrer active-klassen. Denne observatøren oppdagerendringen og flytter markøren automatisk.*/
-
-if (quickNavigation) {
-
-const navigationMarkerObserver =new MutationObserver(moveActiveMarker);
-
-navigationMarkerObserver.observe(quickNavigation,{subtree: true,attributes: true,attributeFilter: ["class"]});
-
-}
+updateHeader();
