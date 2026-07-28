@@ -1,276 +1,2627 @@
-/* =========================================================
-   KORRIGERING AV GAVEØNSKER, RSVP OG FOOTER
-   Denne blokken skal ligge HELT NEDERST i style.css
-   ========================================================= */
+{--paper: #f5f1ea;--paper-light: #fbf8f3;--paper-shadow: #ded5ca;
+
+--espresso: #342822;--espresso-soft: #68564c;
+
+--burgundy: #652f3b;--burgundy-dark: #452027;
+
+--blush: #d9b9b4;--blush-light: #eee1de;
+
+--wax: #743442;--wax-dark: #4d1f29;--wax-light: #9a5360;
+
+--line: rgba(52, 40, 34, .18);--line-dark: rgba(52, 40, 34, .32);
+
+--header-height: 72px;--content-width: 1220px;
+
+--ease: cubic-bezier(.22, 1, .36, 1);}
+
+{box-sizing: border-box;}
+
+html {scroll-behavior: smooth;scroll-padding-top: var(--header-height);}
+
+body {margin: 0;
+
+color: var(--espresso);background: var(--paper);
+
+font-family: "EB Garamond", serif;
+
+-webkit-font-smoothing: antialiased;text-rendering: optimizeLegibility;}
+
+body.invitation-closed,body.menu-open,body.modal-open {overflow: hidden;}
+
+img {display: block;max-width: 100%;}
+
+a {color: inherit;text-decoration: none;}
+
+button,input,textarea {font: inherit;}
+
+.paper-texture {position: absolute;inset: 0;z-index: 1;
+
+pointer-events: none;
+
+opacity: .22;
+
+background-image:repeating-linear-gradient(0deg,rgba(52, 40, 34, .018) 0,rgba(52, 40, 34, .018) 1px,transparent 1px,transparent 4px),repeating-linear-gradient(90deg,rgba(52, 40, 34, .012) 0,rgba(52, 40, 34, .012) 1px,transparent 1px,transparent 5px);}
+
+/* HEADER */
+
+.site-header {position: fixed;inset: 0 0 auto;z-index: 600;
+
+height:calc(var(--header-height) +env(safe-area-inset-top));
+
+display: grid;grid-template-columns: auto 1fr auto;align-items: center;
+
+column-gap: clamp(18px, 3vw, 50px);
+
+padding:env(safe-area-inset-top)clamp(20px, 4vw, 68px)0;
+
+color: var(--espresso);background: rgba(245, 241, 234, .985);
+
+border-bottom: 1px solid rgba(52, 40, 34, .1);
+
+backdrop-filter: blur(15px);-webkit-backdrop-filter: blur(15px);
+
+opacity: 0;visibility: hidden;
+
+transform: translateY(-100%);
+
+transition:opacity .55s var(--ease),visibility .55s var(--ease),transform .55s var(--ease),box-shadow .3s ease;}
+
+body.invitation-open .site-header {opacity: 1;visibility: visible;transform: translateY(0);}
+
+.site-header.scrolled {box-shadow:0 10px 30px rgba(52, 40, 34, .065);}
+
+.wordmark {position: relative;z-index: 630;
+
+font-family: "Bodoni Moda", serif;font-size: .98rem;font-weight: 500;
+
+letter-spacing: .26em;white-space: nowrap;}
+
+.wordmark span {color: var(--burgundy);
+
+font-family: "Allura", cursive;font-size: 1.55em;}
+
+/* IKONER I HEADER */
+
+.header-quick-navigation {justify-self: center;
+
+display: flex;align-items: center;justify-content: center;
+
+gap: clamp(4px, 1.5vw, 18px);}
+
+.header-quick-navigation a {position: relative;
+
+width: clamp(34px, 3.1vw, 43px);height: clamp(34px, 3.1vw, 43px);
+
+display: grid;place-items: center;
+
+color: var(--espresso-soft);background: transparent;
+
+border: 1px solid transparent;border-radius: 50%;
+
+transition:color .25s ease,background-color .25s ease,border-color .25s ease,transform .25s var(--ease);}
+
+.header-quick-navigation a,.header-quick-navigation a {color: var(--burgundy);background: rgba(101, 47, 59, .055);
+
+border-color: rgba(101, 47, 59, .15);
+
+transform: translateY(-1px);}
+
+.header-quick-navigation a.active {color: var(--paper-light);background: var(--burgundy);
+
+border-color: var(--burgundy);}
+
+.header-quick-navigation svg {width: clamp(17px, 1.5vw, 20px);height: clamp(17px, 1.5vw, 20px);
+
+fill: none;stroke: currentColor;stroke-width: 1.35;stroke-linecap: round;stroke-linejoin: round;}
+
+.header-quick-navigation a::after {content: attr(data-tooltip);
+
+position: absolute;top: calc(100% + 7px);left: 50%;
+
+padding: 5px 8px;
+
+color: var(--paper-light);background: var(--espresso);
+
+font-family: "Montserrat", sans-serif;font-size: .38rem;font-weight: 500;
+
+letter-spacing: .1em;text-transform: uppercase;white-space: nowrap;
+
+border-radius: 2px;
+
+opacity: 0;visibility: hidden;
+
+transform:translate(-50%, -4px);
+
+transition:opacity .2s ease,visibility .2s ease,transform .2s ease;
+
+pointer-events: none;}
+
+.header-quick-navigation a:hover::after,.header-quick-navigation a:focus-visible::after {opacity: 1;visibility: visible;
+
+transform:translate(-50%, 0);}
+
+/* DESKTOP-MENY */
+
+.main-navigation {display: none;}
+
+.header-actions {display: flex;align-items: center;
+
+gap: 16px;}
+
+.reopen-button {padding: 8px 0;
+
+color: var(--burgundy);background: transparent;
+
+font-family: "Montserrat", sans-serif;font-size: .5rem;font-weight: 500;
+
+letter-spacing: .17em;text-transform: uppercase;
+
+border: 0;border-bottom: 1px solid var(--burgundy);
+
+cursor: pointer;}
+
+.menu-toggle {position: relative;z-index: 640;
+
+width: 42px;height: 42px;
+
+padding: 0;
+
+color: var(--espresso);background: transparent;
+
+border: 0;
+
+cursor: pointer;}
+
+.menu-toggle span {position: absolute;left: 9px;
+
+width: 24px;height: 1px;
+
+background: currentColor;
+
+transition:top .3s var(--ease),transform .3s var(--ease);}
+
+.menu-toggle span {top: 16px;}
+
+.menu-toggle span {top: 25px;}
+
+.menu-toggle[aria-expanded="true"] span {top: 21px;transform: rotate(45deg);}
+
+.menu-toggle[aria-expanded="true"] span {top: 21px;transform: rotate(-45deg);}
+
+/* FULLSKJERMSMENY */
+
+.main-navigation {position: fixed;inset: 0;z-index: 610;
+
+min-height: 100dvh;
+
+flex-direction: column;justify-content: center;align-items: center;
+
+gap: 0;
+
+padding:calc(85px +env(safe-area-inset-top))28pxcalc(45px +env(safe-area-inset-bottom));
+
+color: var(--burgundy-dark);background: var(--paper);
+
+opacity: 0;visibility: hidden;
+
+transform: translateY(-12px);
+
+transition:opacity .3s var(--ease),visibility .3s var(--ease),transform .3s var(--ease);}
+
+.main-navigation.open {display: flex;
+
+opacity: 1;visibility: visible;
+
+transform: translateY(0);}
+
+.main-navigation a {width: min(420px, 100%);
+
+padding: 15px 0;
+
+color: var(--burgundy-dark);
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.8rem, 4vw, 2.75rem);font-weight: 400;
+
+line-height: 1.1;letter-spacing: .01em;text-align: center;
+
+border-bottom:1px solid rgba(52, 40, 34, .12);}
+
+.main-navigation a {border-top:1px solid rgba(52, 40, 34, .12);}
+
+/* INVITASJON */
+
+.invitation-section {position: relative;
+
+min-height: 100svh;
+
+overflow: hidden;
+
+display: grid;place-items: center;
+
+padding: 18px;
+
+perspective: 2200px;
+
+background:radial-gradient(circle at center,var(--paper-light),var(--paper));}
+
+.invitation-interior {position: relative;z-index: 10;
+
+width: min(1320px, 97vw);height: min(790px, calc(100svh - 36px));
+
+display: grid;grid-template-columns: .82fr 1.36fr .82fr;grid-template-rows: minmax(0, 1fr) auto auto;
+
+color: var(--espresso);background: var(--paper-light);
+
+border: 1px solid var(--line-dark);
+
+box-shadow:0 26px 75px rgba(52, 40, 34, .1);
+
+opacity: .4;
+
+transform: scale(.975);
+
+transition:opacity .7s var(--ease) .22s,transform .7s var(--ease) .22s;}
+
+body.invitation-open .invitation-interior {opacity: 1;transform: scale(1);}
+
+.invitation-interior::before {content: "";
+
+position: absolute;inset: 9px;z-index: 20;
+
+border: 1px solid rgba(101, 47, 59, .17);
+
+pointer-events: none;}
+
+.inside-panel {position: relative;z-index: 30;
+
+min-width: 0;
+
+padding:clamp(26px, 3vw, 46px)clamp(23px, 2.6vw, 40px);}
+
+.inside-left {border-right: 1px solid var(--line);}
+
+.inside-right {border-left: 1px solid var(--line);}
+
+.inside-heading {margin: 0 0 18px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .54rem;font-weight: 500;
+
+letter-spacing: .28em;text-transform: uppercase;}
+
+.inside-information article {padding: 13px 0;
+
+border-top: 1px solid var(--line);}
+
+.inside-information article {border-bottom: 1px solid var(--line);}
+
+.inside-information h3,.mini-program h3 {margin: 0 0 4px;
+
+font-family: "Bodoni Moda", serif;font-size: 1.08rem;font-weight: 400;}
+
+.inside-information p,.mini-program p,.dresscode-preview p {margin: 0;
+
+color: var(--espresso-soft);
+
+font-size: .82rem;line-height: 1.45;}
+
+.inside-center {display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+text-align: center;}
+
+.invitation-eyebrow {margin: 0 0 5px;
+
+font-family: "Montserrat", sans-serif;font-size: .49rem;font-weight: 500;
+
+letter-spacing: .28em;text-transform: uppercase;}
+
+.harmonien-illustration {width: min(390px, 86%);max-height: 220px;
+
+margin: 0 auto 3px;
+
+object-fit: contain;
+
+mix-blend-mode: multiply;
+
+filter:grayscale(1)contrast(1.06);}
+
+.inside-center h1 {margin: 0;
+
+color: var(--burgundy-dark);
+
+font-family: "Allura", cursive;font-size: clamp(4rem, 5.4vw, 6rem);font-weight: 400;
+
+line-height: .71;}
+
+.inside-center h1 span {display: inline-block;}
+
+.inside-center h1 em {margin: 0 .12em;
+
+color: var(--espresso);
+
+font-family: "Allura", cursive;font-size: .42em;font-style: normal;font-weight: 400;
+
+vertical-align: middle;}
+
+.invitation-request {margin: 20px 0 12px;
+
+font-family: "Montserrat", sans-serif;font-size: .52rem;font-weight: 500;
+
+letter-spacing: .24em;text-transform: uppercase;}
+
+.wedding-date {display: flex;align-items: center;justify-content: center;
+
+margin-top: 3px;}
+
+.wedding-day {padding-right: 15px;
+
+color: var(--burgundy);
+
+font-family: "Bodoni Moda", serif;font-size: 3rem;
+
+line-height: 1;
+
+border-right: 1px solid var(--line);}
+
+.wedding-month {padding-left: 15px;
+
+font-family: "Montserrat", sans-serif;font-size: .54rem;font-weight: 500;
+
+line-height: 1.65;letter-spacing: .21em;text-align: left;text-transform: uppercase;}
+
+.venue {margin: 10px 0 0;
+
+font-family: "Bodoni Moda", serif;font-size: 1.12rem;
+
+letter-spacing: .17em;text-transform: uppercase;}
+
+.city {margin: 3px 0 0;
+
+font-family: "Montserrat", sans-serif;font-size: .46rem;font-weight: 500;
+
+letter-spacing: .27em;text-transform: uppercase;}
+
+.mini-program article {display: grid;grid-template-columns: 72px 1fr;
+
+gap: 12px;
+
+padding: 13px 0;
+
+border-top: 1px solid var(--line);}
+
+.mini-program article {border-bottom: 1px solid var(--line);}
+
+.mini-program article > span {padding-top: 4px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .43rem;font-weight: 500;
+
+letter-spacing: .14em;text-transform: uppercase;}
+
+.dresscode-preview {margin-top: 28px;}
+
+.dresscode-preview .inside-heading {margin-bottom: 9px;}
+
+.countdown {position: relative;z-index: 30;
+
+grid-column: 1 / -1;
+
+width: min(720px, 82%);
+
+margin: 0 auto;padding: 17px 0 5px;
+
+display: grid;grid-template-columns: repeat(4, 1fr);
+
+border-top: 1px solid var(--line);}
+
+.countdown-item {position: relative;
+
+display: flex;flex-direction: column;align-items: center;
+
+gap: 4px;}
+
+.countdown-item()::after {content: "";
+
+position: absolute;top: 3px;right: 0;
+
+width: 1px;height: 36px;
+
+background: var(--line);}
+
+.countdown-item span {color: var(--burgundy-dark);
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.55rem, 2.5vw, 2.6rem);
+
+line-height: 1;
+
+font-variant-numeric: tabular-nums;}
+
+.countdown-item small {font-family: "Montserrat", sans-serif;font-size: .4rem;font-weight: 500;
+
+letter-spacing: .17em;text-transform: uppercase;}
+
+/* KONVOLUTT */
+
+.invitation-cover {position: absolute;inset: 0;z-index: 100;
+
+display: grid;grid-template-columns: 1fr 1fr;
+
+pointer-events: auto;
+
+transform-style: preserve-3d;
+
+transition:visibility .1s linear 1.15s;}
+
+body.invitation-open .invitation-cover {visibility: hidden;pointer-events: none;}
+
+.envelope-shadow {position: absolute;inset: 5% 7%;z-index: -1;
+
+background: rgba(52, 40, 34, .17);
+
+filter: blur(42px);
+
+opacity: .48;
+
+transition: opacity .7s var(--ease);}
+
+body.invitation-open .envelope-shadow {opacity: 0;}
+
+.envelope-top-flap {position: absolute;top: 0;left: 0;z-index: 112;
+
+width: 100%;height: 48%;
+
+background:linear-gradient(155deg,rgba(248, 245, 239, .9),rgba(236, 230, 222, .6));
+
+clip-path:polygon(0 0,100% 0,50% 100%);
+
+opacity: .24;
+
+pointer-events: none;
+
+transform-origin: top center;
+
+transition:transform .9s var(--ease),opacity .6s ease;}
+
+body.invitation-open .envelope-top-flap {opacity: 0;
+
+transform:perspective(1500px)rotateX(105deg);}
+
+.envelope-bottom-fold {position: absolute;bottom: 0;left: 0;z-index: 111;
+
+width: 100%;height: 44%;
+
+background:linear-gradient(25deg,rgba(237, 231, 223, .48),rgba(250, 248, 243, .2));
+
+clip-path:polygon(0 100%,100% 100%,50% 0);
+
+opacity: .18;
+
+pointer-events: none;}
+
+.cover-door {position: relative;
+
+overflow: hidden;
+
+display: flex;align-items: center;
+
+background:linear-gradient(135deg,#fbf9f5,#f0ece6);
+
+border-top: 1px solid var(--line-dark);border-bottom: 1px solid var(--line-dark);
+
+backface-visibility: hidden;transform-style: preserve-3d;
+
+transition:transform 1.25s var(--ease),box-shadow 1s var(--ease);}
+
+.cover-door::before {content: "";
+
+position: absolute;inset: 14px;
+
+border: 1px solid rgba(52, 40, 34, .11);}
+
+.cover-door-left {justify-content: flex-end;
+
+border-left: 1px solid var(--line-dark);border-right: 1px solid rgba(52, 40, 34, .14);
+
+transform-origin: left center;}
+
+.cover-door-right {justify-content: flex-start;
+
+border-right: 1px solid var(--line-dark);border-left: 1px solid rgba(255, 255, 255, .62);
+
+transform-origin: right center;}
+
+body.invitation-open .cover-door-left {transform:perspective(1800px)rotateY(-112deg);}
+
+body.invitation-open .cover-door-right {transform:perspective(1800px)rotateY(112deg);}
+
+.cover-content {width: min(260px, 75%);
+
+display: flex;flex-direction: column;align-items: center;
+
+text-align: center;}
+
+.cover-door-left .cover-content {transform: translateX(-3%);}
+
+.cover-door-right .cover-content {transform: translateX(3%);}
+
+.cover-initial {color: var(--espresso);
+
+font-family: "Allura", cursive;font-size: clamp(7rem, 12vw, 12rem);font-weight: 400;
+
+line-height: .82;}
+
+.cover-detail {margin-top: 34px;
+
+color: var(--espresso-soft);
+
+font-family: "Montserrat", sans-serif;font-size: .62rem;font-weight: 500;
+
+letter-spacing: .35em;text-transform: uppercase;}
+
+.wax-seal {position: absolute;left: 50%;top: 55%;z-index: 150;
+
+width: 104px;height: 104px;
+
+padding: 0;
+
+background: transparent;border: 0;
+
+transform: translate(-50%, -50%);
+
+cursor: pointer;
+
+transition:transform .35s var(--ease),opacity .35s ease,filter .35s ease;}
+
+.wax-seal {transform:translate(-50%, -54%)scale(1.04);}
+
+.wax-seal-inner {position: relative;
+
+display: block;
+
+width: 100%;height: 100%;
+
+border-radius:48% 52% 44% 56%/ 52% 45% 55% 48%;
+
+background:radial-gradient(circle at 35% 27%,var(--wax-light),var(--wax) 45%,var(--wax-dark) 100%);
+
+box-shadow:0 9px 18px rgba(52, 40, 34, .26),inset 3px 3px 5px rgba(255, 255, 255, .16),inset -5px -5px 9px rgba(50, 15, 23, .25);
+
+transform: rotate(-4deg);}
+
+.wax-seal-inner::before {content: "";
+
+position: absolute;inset: 10px;
+
+border: 1px solid rgba(245, 241, 234, .4);border-radius: 50%;
+
+box-shadow:inset 0 0 0 3px rgba(69, 32, 39, .22);}
+
+.wax-seal-inner::after {content: "";
+
+position: absolute;top: 12px;left: 20px;
+
+width: 25px;height: 11px;
+
+border-radius: 50%;
+
+background:rgba(255, 255, 255, .13);
+
+transform: rotate(-26deg);
+
+filter: blur(1px);}
+
+body.invitation-open .wax-seal {opacity: 0;pointer-events: none;
+
+transform:translate(-50%, -25%)scale(.72);}
+
+/* SEKSJONER */
+
+.screen-section {position: relative;
+
+min-height: 100svh;
+
+display: flex;flex-direction: column;justify-content: center;
+
+padding:calc(var(--header-height) + 24px)clamp(24px, 6vw, 90px)28px;
+
+scroll-margin-top: 0;}
+
+.section-label {margin: 0 0 8px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .53rem;font-weight: 500;
+
+letter-spacing: .3em;text-transform: uppercase;}
+
+.compact-section-heading {margin-bottom: clamp(22px, 3vw, 40px);
+
+text-align: center;}
+
+.compact-section-heading h2,.gifts-content h2,.rsvp-card h2,.modal-heading h2 {margin: 0;
+
+font-family: "Bodoni Moda", serif;font-size: clamp(2.8rem, 5vw, 5.4rem);font-weight: 400;
+
+line-height: 1;}
+
+.section-jump {position: relative;
+
+width: fit-content;
+
+margin:clamp(18px, 3vh, 34px)auto 0;
+
+display: flex;flex-direction: column;align-items: center;
+
+gap: 2px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .46rem;font-weight: 500;
+
+letter-spacing: .19em;text-transform: uppercase;}
+
+.section-jump i {font-family: inherit;font-size: .95rem;font-style: normal;
+
+transition:transform .25s ease;}
+
+.section-jump i {transform: translateY(4px);}
+
+.light-jump {color: var(--blush-light);}
+
+.invitation-jump {position: relative;z-index: 30;
+
+grid-column: 1 / -1;
+
+margin:11px auto 18px;}
+
+/* HISTORIE */
+
+.story-section {background: var(--paper-light);}
+
+.compact-history-grid {width: min(1060px, 100%);
+
+margin: 0 auto;
+
+display: grid;grid-template-columns: repeat(4, 1fr);
+
+border-top: 1px solid var(--line);border-left: 1px solid var(--line);}
+
+.history-moment {min-height: 190px;
+
+display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+padding: 20px 14px;
+
+text-align: center;
+
+border-right: 1px solid var(--line);border-bottom: 1px solid var(--line);}
+
+.history-icon {width: 45px;height: 45px;
+
+display: grid;place-items: center;
+
+margin-bottom: 9px;
+
+color: var(--burgundy);
+
+border: 1px solid var(--line-dark);border-radius: 50%;}
+
+.history-icon svg {width: 25px;height: 25px;
+
+fill: none;stroke: currentColor;stroke-width: 1.4;stroke-linecap: round;stroke-linejoin: round;}
+
+.history-moment time {color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .44rem;font-weight: 500;
+
+letter-spacing: .18em;text-transform: uppercase;}
+
+.history-moment h3 {margin: 8px 0 0;
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.15rem, 2vw, 1.75rem);font-weight: 400;
+
+line-height: 1.1;}
+
+.final-moment {color: var(--paper-light);background: var(--burgundy);}
+
+.final-moment time {color: var(--blush-light);}
+
+.final-moment .history-icon {color: var(--paper-light);
+
+border-color:rgba(255, 255, 255, .45);}
+
+/* PROGRAM */
+
+.program-section {background: var(--blush-light);}
+
+.program-grid {width: min(1060px, 100%);
+
+margin: 0 auto;
+
+display: grid;grid-template-columns: repeat(4, 1fr);
+
+border-top: 1px solid var(--line);border-left: 1px solid var(--line);}
+
+.program-card {min-height: 310px;
+
+display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+padding: 28px 22px;
+
+text-align: center;
+
+border-right: 1px solid var(--line);border-bottom: 1px solid var(--line);}
+
+.program-number {color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .43rem;font-weight: 500;
+
+letter-spacing: .2em;}
+
+.program-card time {margin: 13px 0 11px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .48rem;font-weight: 500;
+
+letter-spacing: .16em;text-transform: uppercase;}
+
+.program-icon {width: 50px;height: 50px;
+
+display: grid;place-items: center;
+
+margin-bottom: 13px;
+
+color: var(--burgundy);
+
+border: 1px solid rgba(101, 47, 59, .3);border-radius: 50%;}
+
+.program-icon svg {width: 29px;height: 29px;
+
+fill: none;stroke: currentColor;stroke-width: 1.4;stroke-linecap: round;stroke-linejoin: round;}
+
+.program-card h3 {margin: 0;
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.45rem, 2.4vw, 2.1rem);font-weight: 400;
+
+line-height: 1.1;}
+
+.program-card p {margin: 9px 0 0;
+
+color: var(--espresso-soft);
+
+font-size: .95rem;line-height: 1.4;}
+
+/* PRAKTISK */
+
+.practical-section {background: var(--paper);}
+
+.information-grid {width: min(var(--content-width), 100%);
+
+margin: 0 auto;
+
+display: grid;grid-template-columns: repeat(4, 1fr);
+
+border-top: 1px solid var(--line);border-left: 1px solid var(--line);}
+
+.information-card {min-height: 285px;
+
+display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+padding:clamp(24px, 3vw, 42px)clamp(18px, 2vw, 30px);
+
+text-align: center;
+
+border-right: 1px solid var(--line);border-bottom: 1px solid var(--line);}
+
+.information-card > span {margin-bottom: 20px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .48rem;font-weight: 500;
+
+letter-spacing: .2em;}
+
+.information-card h3 {margin: 0 0 10px;
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.5rem, 2.2vw, 2rem);font-weight: 400;}
+
+.information-card p {margin: 0;
+
+color: var(--espresso-soft);
+
+font-size: .94rem;line-height: 1.5;}
+
+/* GAVER */
+
+.gifts-section {color: var(--paper);background: var(--burgundy-dark);}
+
+.gifts-content {width: min(760px, 100%);
+
+margin: auto;
+
+text-align: center;}
+
+.gifts-content .section-label {color: var(--blush);}
+
+.gifts-content h2 {color: var(--paper-light);}
+
+.gifts-content p {max-width: 680px;
+
+margin: 16px auto 0;
+
+color: var(--paper-shadow);
+
+font-size: 1.01rem;line-height: 1.65;}
+
+.gifts-content .gifts-lead {margin-top: 25px;
+
+color: var(--paper-light);
+
+font-size: 1.2rem;font-style: italic;}
+
+.gift-button {width: min(520px, 100%);
+
+margin: 29px auto 0;padding: 16px 25px;
+
+display: flex;align-items: center;justify-content: center;
+
+gap: 20px;
+
+color: var(--burgundy-dark);background: var(--paper-light);
+
+font-family: "Montserrat", sans-serif;font-size: .54rem;font-weight: 500;
+
+letter-spacing: .2em;text-transform: uppercase;
+
+border: 1px solid var(--paper-light);}
+
+.gift-button i {font-size: 1rem;font-style: normal;}
+
+.disabled-link {cursor: default;opacity: .76;}
+
+.gift-link-note {display: block;
+
+margin-top: 11px;
+
+color: var(--blush);
+
+font-family: "Montserrat", sans-serif;font-size: .42rem;
+
+letter-spacing: .18em;text-transform: uppercase;}
+
+/* RSVP */
+
+.rsvp-section {background: var(--paper-light);}
+
+.rsvp-card {width: min(760px, 100%);
+
+margin: auto;padding:clamp(55px, 7vw, 90px)clamp(28px, 7vw, 80px);
+
+text-align: center;
+
+background: var(--blush-light);
+
+border: 1px solid rgba(101, 47, 59, .2);
+
+box-shadow:0 30px 70px rgba(52, 40, 34, .13),inset 0 0 0 8px var(--blush-light),inset 0 0 0 9px rgba(101, 47, 59, .15);}
+
+.rsvp-card > p(.section-label) {max-width: 540px;
+
+margin: 22px auto;
+
+color: var(--espresso-soft);
+
+font-size: 1.02rem;line-height: 1.7;}
+
+.rsvp-button,.form-submit {padding: 15px 27px;
+
+color: var(--paper);background: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .54rem;font-weight: 500;
+
+letter-spacing: .2em;text-transform: uppercase;
+
+border: 1px solid var(--burgundy);
+
+cursor: pointer;}
+
+/* FOOTER */
+
+.site-footer {padding:42px 24pxcalc(42px + env(safe-area-inset-bottom));
+
+color: var(--espresso);background: var(--paper);
+
+text-align: center;
+
+border-top: 1px solid var(--line);}
+
+.site-footer p {margin: 5px 0;
+
+font-family: "Montserrat", sans-serif;font-size: .46rem;font-weight: 500;
+
+letter-spacing: .23em;text-transform: uppercase;}
+
+.footer-names {margin-bottom: 12px !important;
+
+color: var(--burgundy);
+
+font-family: "Allura", cursive !important;font-size: clamp(2.6rem, 5vw, 4rem) !important;font-weight: 400 !important;
+
+line-height: 1 !important;letter-spacing: 0 !important;text-transform: none !important;}
+
+/* MODAL */
+
+.rsvp-modal {position: fixed;inset: 0;z-index: 1000;
+
+display: grid;place-items: center;
+
+padding:calc(20px + env(safe-area-inset-top))20pxcalc(20px + env(safe-area-inset-bottom));
+
+opacity: 0;visibility: hidden;
+
+transition:opacity .35s var(--ease),visibility .35s var(--ease);}
+
+.rsvp-modal.open {opacity: 1;visibility: visible;}
+
+.modal-backdrop {position: absolute;inset: 0;
+
+width: 100%;height: 100%;
+
+background:rgba(38, 27, 23, .72);
+
+border: 0;
+
+cursor: pointer;
+
+backdrop-filter: blur(9px);-webkit-backdrop-filter: blur(9px);}
+
+.modal-panel {position: relative;z-index: 2;
+
+width: min(760px, 100%);max-height: min(880px, 94dvh);
+
+overflow-y: auto;
+
+padding:clamp(45px, 6vw, 75px)clamp(25px, 6vw, 65px);
+
+color: var(--espresso);background: var(--paper-light);
+
+border: 1px solid var(--line-dark);
+
+box-shadow:0 30px 90px rgba(0, 0, 0, .24);
+
+transform: translateY(30px) scale(.98);
+
+transition:transform .4s var(--ease);}
+
+.rsvp-modal.open .modal-panel {transform: translateY(0) scale(1);}
+
+.modal-panel::before {content: "";
+
+position: absolute;inset: 9px;
+
+border: 1px solid rgba(101, 47, 59, .14);
+
+pointer-events: none;}
+
+.modal-close {position: absolute;top: 22px;right: 22px;z-index: 4;
+
+width: 42px;height: 42px;
+
+padding: 0;
+
+background: transparent;border: 0;
+
+cursor: pointer;}
+
+.modal-close span {position: absolute;top: 20px;left: 8px;
+
+width: 26px;height: 1px;
+
+background: var(--espresso);}
+
+.modal-close span {transform: rotate(45deg);}
+
+.modal-close span {transform: rotate(-45deg);}
+
+.modal-heading {margin-bottom: 42px;
+
+text-align: center;}
+
+.modal-heading h2 {color: var(--burgundy-dark);}
+
+.modal-heading > p {margin: 17px auto 0;
+
+color: var(--espresso-soft);
+
+font-size: 1rem;}
+
+.rsvp-form {position: relative;z-index: 2;}
+
+.form-grid {display: grid;grid-template-columns: 1fr 1fr;
+
+gap: 25px;}
+
+.form-field {display: flex;flex-direction: column;
+
+gap: 9px;}
+
+.form-field > span,.radio-field legend {color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .51rem;font-weight: 500;
+
+letter-spacing: .18em;text-transform: uppercase;}
+
+.full-width {grid-column: 1 / -1;}
+
+.form-field input,.form-field textarea {width: 100%;
+
+padding: 13px 0;
+
+color: var(--espresso);background: transparent;
+
+font-family: "EB Garamond", serif;font-size: 1.05rem;
+
+border: 0;border-bottom: 1px solid var(--line-dark);border-radius: 0;
+
+outline: none;
+
+resize: vertical;}
+
+.form-field input,.form-field textarea {border-bottom-color: var(--burgundy);}
+
+.form-field textarea {min-height: 80px;}
+
+.radio-field {margin: 0;padding: 0;
+
+border: 0;}
+
+.radio-field legend {margin-bottom: 14px;}
+
+.radio-field label {display: inline-flex;align-items: center;
+
+gap: 8px;
+
+margin: 0 22px 10px 0;
+
+color: var(--espresso-soft);
+
+cursor: pointer;}
+
+.radio-field input {width: auto;}
+
+.form-status {min-height: 25px;
+
+margin: 24px 0 16px;
+
+color: var(--burgundy);
+
+text-align: center;}
+
+.form-status.error {color: #8a242d;}
+
+.form-status.success {color: #3d6847;}
+
+.form-submit {display: block;
+
+min-width: 190px;
+
+margin: 0 auto;}
+
+/* ANIMASJON */
+
+.reveal {opacity: 0;
+
+transform: translateY(19px);
+
+transition:opacity .7s var(--ease),transform .7s var(--ease);}
+
+.reveal.visible {opacity: 1;transform: translateY(0);}
+
+/* MOBIL */
 
 @media (max-width: 760px) {
 
-  /* ---------------------------------------------------------
-     GAVEØNSKER
-     Flytter hele innholdet tydelig opp, men beholder
-     "Fortsett til RSVP" synlig over Safari-linjen.
-     --------------------------------------------------------- */
+ {--header-height: 70px;}
 
-  .gifts-section {
-    position: relative;
+html {scroll-padding-top:calc(var(--header-height) +env(safe-area-inset-top));}
 
-    min-height: 100svh;
+.site-header {grid-template-columns:auto 1fr auto;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+column-gap: 7px;
 
-    padding-top:
-      calc(
-        var(--header-height) +
-        env(safe-area-inset-top) +
-        54px
-      );
+height:
+  calc(
+    var(--header-height) +
+    env(safe-area-inset-top)
+  );
 
-    padding-right: 18px;
-
-    padding-bottom:
-      calc(
-        104px +
-        env(safe-area-inset-bottom)
-      );
-
-    padding-left: 18px;
-  }
-
-  .gifts-section .gifts-content {
-    width: 100%;
-    max-width: 760px;
-
-    margin: 0 auto;
-    margin-bottom: 0;
-
-    transform: none;
-  }
-
-  .gifts-content .section-label {
-    margin-top: 0;
-    margin-bottom: 12px;
-  }
-
-  .gifts-content h2 {
-    margin-top: 0;
-  }
-
-  .gifts-content .gifts-lead {
-    margin-top: 25px;
-  }
-
-  .gifts-content p {
-    margin-top: 20px;
-  }
-
-  .gift-button {
-    margin-top: 27px;
-  }
-
-  .gift-link-note {
-    margin-top: 15px;
-  }
-
-  .gifts-section .section-jump {
-    position: absolute;
-
-    left: 50%;
-    bottom:
-      calc(
-        84px +
-        env(safe-area-inset-bottom)
-      );
-
-    width: max-content;
-
-    margin: 0;
-    padding: 0;
-
-    transform: translateX(-50%);
-
-    color: var(--paper-light);
-  }
-
-
-  /* ---------------------------------------------------------
-     RSVP + FOOTER
-     RSVP blir kortere slik at footeren med navnene kommer
-     med på samme skjermbilde.
-     --------------------------------------------------------- */
-
-  .rsvp-section {
-    position: relative;
-
-    min-height: 0;
-    height:
-      calc(
-        100svh -
-        var(--header-height) -
-        270px
-      );
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    padding-top:
-      calc(
-        env(safe-area-inset-top) +
-        18px
-      );
-
-    padding-right: 18px;
-
-    padding-bottom: 52px;
-
-    padding-left: 18px;
-  }
-
-  .rsvp-section .rsvp-card {
-    width: 100%;
-    max-width: 760px;
-
-    margin: 0 auto;
-
-    padding:
-      clamp(38px, 6.5vh, 58px)
-      22px;
-
-    transform: none;
-  }
-
-  .rsvp-card .section-label {
-    margin-bottom: 8px;
-  }
-
-  .rsvp-card h2 {
-    margin-top: 0;
-
-    font-size:
-      clamp(
-        3.6rem,
-        15vw,
-        5rem
-      );
-  }
-
-  .rsvp-card > p:not(.section-label) {
-    margin:
-      23px auto
-      27px;
-
-    max-width: 540px;
-  }
-
-  .rsvp-section .section-jump {
-    position: absolute;
-
-    left: 50%;
-    bottom: 13px;
-
-    width: max-content;
-
-    margin: 0;
-    padding: 0;
-
-    transform: translateX(-50%);
-  }
-
-
-  /* Footeren trekkes direkte opp under RSVP */
-
-  .site-footer {
-    min-height: 270px;
-    height: 270px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    margin: 0;
-
-    padding:
-      30px 20px
-      calc(
-        30px +
-        env(safe-area-inset-bottom)
-      );
-  }
-
-  .site-footer::before {
-    width: min(580px, 76vw);
-
-    margin-bottom: 28px;
-  }
-
-
-  /* Sørger for korrekt landing når RSVP-ikonet trykkes */
-
-  #rsvp {
-    scroll-margin-top: var(--header-height);
-  }
+padding:
+  env(safe-area-inset-top)
+  14px 0;
 
 }
 
+.wordmark {font-size: .83rem;letter-spacing: .18em;}
 
-/* =========================================================
-   LAVERE MOBILSKJERMER
-   For eksempel mindre iPhone-modeller
-   ========================================================= */
+.header-actions {gap: 0;}
+
+.reopen-button {display: none;}
+
+.header-quick-navigation {gap: 0;
+
+min-width: 0;
+
+}
+
+.header-quick-navigation a {width: clamp(29px, 8vw, 37px);height: clamp(29px, 8vw, 37px);}
+
+.header-quick-navigation svg {width: 16px;height: 16px;}
+
+.header-quick-navigation a::after {display: none;}
+
+.menu-toggle {width: 38px;height: 38px;}
+
+.menu-toggle span {left: 7px;width: 23px;}
+
+.main-navigation a {width: min(310px, 100%);
+
+font-size: clamp(1.75rem, 8vw, 2.35rem);
+
+}
+
+.invitation-section {min-height: 100svh;padding: 0;}
+
+.invitation-interior {width: 100%;height: auto;min-height: 100svh;
+
+grid-template-columns: 1fr;
+grid-template-rows: auto;
+
+overflow: visible;
+
+border: 0;
+box-shadow: none;
+
+}
+
+.invitation-interior::before {inset:calc(10px +env(safe-area-inset-top))10px10px;}
+
+.inside-left,.inside-right {display: none;}
+
+.inside-center {min-height: auto;
+
+padding:
+  calc(
+    76px +
+    env(safe-area-inset-top)
+  )
+  24px
+  22px;
+
+justify-content: flex-start;
+
+}
+
+.invitation-eyebrow {margin-bottom: 5px;
+
+font-size: .43rem;
+
+}
+
+.harmonien-illustration {width: min(430px, 96%);max-height: 225px;
+
+margin-bottom: 1px;
+
+}
+
+.inside-center h1 {font-size: clamp(3.45rem, 15vw, 4.8rem);}
+
+.inside-center h1 span {display: block;}
+
+.inside-center h1 em {display: block;
+
+margin: .03em 0 0;
+
+font-size: .42em;
+
+}
+
+.invitation-request {max-width: 320px;
+
+margin: 14px auto 9px;
+
+font-size: .45rem;
+line-height: 1.5;
+
+}
+
+.wedding-day {font-size: 2.5rem;}
+
+.wedding-month {font-size: .48rem;}
+
+.venue {margin-top: 8px;}
+
+.countdown {width: calc(100% - 36px);
+
+margin-top: 0;
+padding-top: 12px;
+
+}
+
+.countdown-item span {font-size: 1.45rem;}
+
+.countdown-item small {font-size: .33rem;letter-spacing: .08em;}
+
+.countdown-item()::after {height: 27px;}
+
+.invitation-jump {margin:9px autocalc(17px +env(safe-area-inset-bottom));}
+
+.cover-initial {font-size: clamp(6rem, 25vw, 9rem);}
+
+.cover-detail {margin-top: 25px;font-size: .48rem;}
+
+.wax-seal {top: 59%;
+
+width: 88px;
+height: 88px;
+
+}
+
+.screen-section {min-height: 100svh;
+
+padding:
+  calc(
+    var(--header-height) +
+    env(safe-area-inset-top) +
+    14px
+  )
+  18px
+  calc(
+    18px +
+    env(safe-area-inset-bottom)
+  );
+
+scroll-margin-top: 0;
+
+}
+
+.compact-section-heading {margin-bottom: 13px;}
+
+.compact-section-heading h2 {font-size: clamp(2.4rem, 10.5vw, 3.45rem);}
+
+.section-label {margin-bottom: 5px;
+
+font-size: .42rem;
+
+}
+
+.section-jump {margin-top: 12px;
+
+font-size: .37rem;
+
+}
+
+.compact-history-grid {grid-template-columns: repeat(2, 1fr);}
+
+.history-moment {min-height: 119px;
+
+padding: 10px 7px;
+
+}
+
+.history-icon {width: 34px;height: 34px;
+
+margin-bottom: 5px;
+
+}
+
+.history-icon svg {width: 19px;height: 19px;}
+
+.history-moment time {font-size: .34rem;letter-spacing: .08em;}
+
+.history-moment h3 {margin-top: 5px;
+
+font-size: clamp(.94rem, 4vw, 1.21rem);
+
+}
+
+.program-grid {grid-template-columns: repeat(2, 1fr);}
+
+.program-card {min-height: 207px;
+
+padding: 14px 9px;
+
+}
+
+.program-number {font-size: .34rem;}
+
+.program-card time {margin: 7px 0;
+
+font-size: .35rem;
+
+}
+
+.program-icon {width: 38px;height: 38px;
+
+margin-bottom: 8px;
+
+}
+
+.program-icon svg {width: 21px;height: 21px;}
+
+.program-card h3 {font-size: clamp(1.03rem, 4.6vw, 1.35rem);}
+
+.program-card p {margin-top: 5px;
+
+font-size: .76rem;
+line-height: 1.23;
+
+}
+
+.practical-section {justify-content: center;}
+
+.information-grid {grid-template-columns: repeat(2, 1fr);}
+
+.information-card {min-height: 225px;
+
+padding: 16px 9px;
+
+}
+
+.information-card > span {margin-bottom: 9px;
+
+font-size: .36rem;
+
+}
+
+.information-card h3 {margin-bottom: 6px;
+
+font-size: clamp(1.08rem, 4.8vw, 1.35rem);
+
+}
+
+.information-card p {font-size: .76rem;line-height: 1.35;}
+
+.gifts-section {justify-content: center;}
+
+.gifts-content h2 {font-size: clamp(2.9rem, 13.5vw, 4rem);}
+
+.gifts-content p {margin-top: 11px;
+
+font-size: .88rem;
+line-height: 1.46;
+
+}
+
+.gifts-content .gifts-lead {margin-top: 17px;
+
+font-size: 1rem;
+
+}
+
+.gift-button {width: 100%;
+
+margin-top: 20px;
+
+}
+
+.rsvp-section {justify-content: center;}
+
+.rsvp-card {width: calc(100% - 8px);
+
+margin: auto;
+padding: 50px 23px;
+
+}
+
+.rsvp-modal {padding: 0;}
+
+.modal-panel {width: 100%;max-height: 100dvh;min-height: 100dvh;
+
+padding:
+  calc(
+    75px +
+    env(safe-area-inset-top)
+  )
+  23px
+  calc(
+    45px +
+    env(safe-area-inset-bottom)
+  );
+
+border: 0;
+
+}
+
+.modal-panel::before {display: none;}
+
+.modal-close {top:calc(18px +env(safe-area-inset-top));
+
+right: 18px;
+
+}
+
+.form-grid {grid-template-columns: 1fr;
+
+gap: 22px;
+
+}
+
+.full-width {grid-column: auto;}
+
+.radio-field label {display: flex;
+
+margin-right: 0;
+
+}
+
+}
+
+@media (max-width: 390px) {
+
+ {--header-height: 66px;}
+
+.site-header {padding:env(safe-area-inset-top)9px 0;}
+
+.wordmark {font-size: .74rem;}
+
+.header-quick-navigation a {width: 27px;height: 27px;}
+
+.header-quick-navigation svg {width: 14px;height: 14px;}
+
+.menu-toggle {width: 34px;}
+
+.inside-center {padding-left: 17px;padding-right: 17px;}
+
+.harmonien-illustration {max-height: 190px;}
+
+.inside-center h1 {font-size: 3.35rem;}
+
+.wax-seal {width: 80px;height: 80px;}
+
+.information-card {min-height: 215px;
+
+padding: 13px 6px;
+
+}
+
+.information-card p {font-size: .7rem;}
+
+}
+
+@media (max-width: 760px) and (max-height: 760px) {
+
+.screen-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +7px);}
+
+.compact-section-heading {margin-bottom: 7px;}
+
+.compact-section-heading h2 {font-size: 2.3rem;}
+
+.history-moment {min-height: 100px;}
+
+.history-icon {width: 29px;height: 29px;}
+
+.history-icon svg {width: 17px;height: 17px;}
+
+.program-card {min-height: 173px;}
+
+.information-card {min-height: 192px;}
+
+.section-jump {margin-top: 7px;}
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+html {scroll-behavior: auto;}
+
+*,*::before,*::after {animation-duration: .01ms !important;animation-iteration-count: 1 !important;
+
+transition-duration: .01ms !important;
+
+scroll-behavior: auto !important;
+
+}
+
+.reveal {opacity: 1;transform: none;}
+
+}/* =========================================================SISTE FINPUSS
+
+seksjonene starter høyere
+
+historien uten bokser
+
+alle kapitler tilpasses ett mobilskjermbilde
+
+luftigere gaveønsker
+
+RSVP og footer vises som én avslutning========================================================= */
+
+/* ANIMERT AKTIV MENYKNAPP */
+
+.header-quick-navigation {position: relative;}
+
+.header-quick-navigation a {z-index: 2;}
+
+.header-quick-navigation a.active {color: var(--paper-light);background: transparent;border-color: transparent;}
+
+.header-active-marker {position: absolute;top: 50%;left: 0;z-index: 1;
+
+width: clamp(34px, 3.1vw, 43px);height: clamp(34px, 3.1vw, 43px);
+
+background: var(--burgundy);border-radius: 50%;
+
+opacity: 0;
+
+transform:translate3d(0, -50%, 0);
+
+transition:transform .48s var(--ease),width .3s var(--ease),height .3s var(--ease),opacity .25s ease;
+
+pointer-events: none;}
+
+/* ALLE KAPITLER STARTER RETT UNDER HEADEREN */
+
+.screen-section {justify-content: flex-start;
+
+padding-top:calc(var(--header-height) +18px);
+
+padding-bottom: 20px;}
+
+.compact-section-heading {flex: 0 0 auto;
+
+margin-top: 0;margin-bottom: 16px;}
+
+.section-jump {flex: 0 0 auto;
+
+margin-top: auto;padding-top: 12px;}
+
+/* HISTORIEN VÅR */
+
+.story-section {background: var(--paper-light);}
+
+.story-section .compact-section-heading {margin-bottom: 12px;}
+
+.editorial-timeline {position: relative;
+
+width: min(1040px, 100%);
+
+margin: 0 auto;
+
+display: grid;grid-template-columns: repeat(4, 1fr);
+
+column-gap: clamp(20px, 3vw, 44px);row-gap: 0;}
+
+.editorial-timeline::before {content: "";
+
+position: absolute;top: 50%;left: 0;right: 0;
+
+height: 1px;
+
+background: var(--line);
+
+transform: translateY(-50%);}
+
+.timeline-event {position: relative;z-index: 1;
+
+min-width: 0;
+
+display: grid;grid-template-columns: 48px minmax(0, 1fr);align-items: center;
+
+gap: 12px;
+
+min-height: 132px;padding: 15px 0;
+
+background: var(--paper-light);
+
+border-bottom: 1px solid var(--line);}
+
+.timeline-event(-n + 4) {border-top: 1px solid var(--line);}
+
+.timeline-symbol {width: 44px;height: 44px;
+
+display: grid;place-items: center;
+
+color: var(--burgundy);background: var(--paper-light);
+
+border: 1px solid var(--line-dark);border-radius: 50%;}
+
+.timeline-symbol svg {width: 24px;height: 24px;
+
+fill: none;stroke: currentColor;stroke-width: 1.35;stroke-linecap: round;stroke-linejoin: round;}
+
+.timeline-copy {min-width: 0;}
+
+.timeline-copy time {display: block;
+
+margin-bottom: 5px;
+
+color: var(--burgundy);
+
+font-family: "Montserrat", sans-serif;font-size: .42rem;font-weight: 500;
+
+line-height: 1.3;letter-spacing: .14em;text-transform: uppercase;}
+
+.timeline-copy h3 {margin: 0;
+
+font-family: "Bodoni Moda", serif;font-size: clamp(1.05rem, 1.8vw, 1.55rem);font-weight: 400;
+
+line-height: 1.05;}
+
+.timeline-event-final .timeline-symbol {color: var(--paper-light);background: var(--burgundy);
+
+border-color: var(--burgundy);}
+
+.timeline-event-final .timeline-copy h3 {color: var(--burgundy);}
+
+/* PROGRAM OG PRAKTISK FLYTTES OPP */
+
+.program-section,.practical-section {justify-content: flex-start;}
+
+.program-section .compact-section-heading,.practical-section .compact-section-heading {margin-bottom: 14px;}
+
+.program-grid,.information-grid {flex: 0 1 auto;}
+
+/* GAVEØNSKER */
+
+.gifts-section {justify-content: flex-start;
+
+padding-top:calc(var(--header-height) +30px);}
+
+.gifts-content {width: min(790px, 100%);
+
+margin: auto auto 0;}
+
+.gifts-content .section-label {margin-bottom: 10px;}
+
+.gifts-content .gifts-lead {margin-top: 32px;}
+
+.gifts-content p {margin-top: 26px;}
+
+.gift-button {margin-top: 34px;}
+
+.gift-link-note {margin-top: 15px;}
+
+.gifts-section .section-jump {margin-top: auto;padding-top: 20px;}
+
+/* RSVP SOM KOMPLETT SISTESIDE */
+
+.rsvp-section {min-height:calc(100svh - 220px);
+
+justify-content: flex-start;
+
+padding-top:calc(var(--header-height) +28px);
+
+padding-bottom: 24px;}
+
+.rsvp-card {width: min(820px, 100%);
+
+margin: 0 auto;
+
+padding:clamp(65px, 8vw, 105px)clamp(32px, 8vw, 92px);}
+
+.rsvp-card > p(.section-label) {margin-top: 27px;margin-bottom: 31px;
+
+font-size: 1.08rem;}
+
+.rsvp-section .section-jump {margin-top: auto;padding-top: 24px;}
+
+.site-footer {min-height: 220px;
+
+display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+padding:35px 24pxcalc(35px +env(safe-area-inset-bottom));
+
+background: var(--paper);}
+
+.site-footer::before {content: "";
+
+width: min(400px, 70vw);height: 1px;
+
+margin-bottom: 32px;
+
+background: var(--line);}
+
+/* MOBIL */
+
+@media (max-width: 760px) {
+
+.header-active-marker {width: clamp(29px, 8vw, 37px);height: clamp(29px, 8vw, 37px);}
+
+.screen-section {min-height: 100svh;
+
+padding:
+  calc(
+    var(--header-height) +
+    env(safe-area-inset-top) +
+    8px
+  )
+  18px
+  calc(
+    12px +
+    env(safe-area-inset-bottom)
+  );
+
+}
+
+.compact-section-heading {margin-bottom: 9px;}
+
+.compact-section-heading h2 {font-size: clamp(2.25rem, 10vw, 3rem);}
+
+.section-label {margin-bottom: 4px;}
+
+.section-jump {padding-top: 6px;}
+
+/* HISTORIEN: ÉN SKJERM, INGEN RUTER */
+
+.story-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +5px);}
+
+.story-section .compact-section-heading {margin-bottom: 7px;}
+
+.editorial-timeline {grid-template-columns: repeat(2, minmax(0, 1fr));
+
+column-gap: 18px;
+
+}
+
+.editorial-timeline::before {display: none;}
+
+.timeline-event {grid-template-columns: 34px minmax(0, 1fr);
+
+gap: 8px;
+
+min-height: 99px;
+padding: 8px 0;
+
+border-top: 0;
+border-bottom: 1px solid var(--line);
+
+}
+
+.timeline-event(-n + 2) {border-top: 1px solid var(--line);}
+
+.timeline-event(-n + 4) {border-top-color: transparent;}
+
+.timeline-event(-n + 2) {border-top-color: var(--line);}
+
+.timeline-symbol {width: 32px;height: 32px;}
+
+.timeline-symbol svg {width: 18px;height: 18px;}
+
+.timeline-copy time {margin-bottom: 3px;
+
+font-size: .31rem;
+letter-spacing: .06em;
+
+}
+
+.timeline-copy h3 {font-size: clamp(.84rem, 3.7vw, 1.04rem);}
+
+.story-section .section-jump {margin-top: auto;}
+
+/* PROGRAM */
+
+.program-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +5px);}
+
+.program-section .compact-section-heading {margin-bottom: 8px;}
+
+.program-card {min-height: 194px;}
+
+/* PRAKTISK */
+
+.practical-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +5px);}
+
+.practical-section .compact-section-heading {margin-bottom: 8px;}
+
+.information-card {min-height: 211px;}
+
+/* GAVER */
+
+.gifts-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +14px);}
+
+.gifts-content {margin: auto 0;}
+
+.gifts-content .gifts-lead {margin-top: 24px;}
+
+.gifts-content p {margin-top: 20px;
+
+line-height: 1.55;
+
+}
+
+.gift-button {margin-top: 27px;}
+
+.gifts-section .section-jump {margin-top: auto;padding-top: 12px;}
+
+/* RSVP OG FOOTER SYNLIG SAMMEN */
+
+.rsvp-section {min-height:calc(100svh - 285px);
+
+padding-top:
+  calc(
+    var(--header-height) +
+    env(safe-area-inset-top) +
+    15px
+  );
+
+padding-bottom: 15px;
+
+}
+
+.rsvp-card {width: 100%;
+
+margin: 0 auto;
+
+padding: 55px 24px;
+
+}
+
+.rsvp-card h2 {font-size: clamp(3.2rem, 14vw, 4.3rem);}
+
+.rsvp-card > p(.section-label) {margin: 24px auto 29px;
+
+font-size: .98rem;
+
+}
+
+.rsvp-section .section-jump {margin-top: auto;padding-top: 14px;}
+
+.site-footer {min-height: 285px;
+
+padding:
+  30px 20px
+  calc(
+    30px +
+    env(safe-area-inset-bottom)
+  );
+
+}
+
+.site-footer::before {margin-bottom: 25px;}
+
+}
+
+/* LAVERE MOBILSKJERMER */
 
 @media (max-width: 760px) and (max-height: 800px) {
 
-  .gifts-section {
-    padding-top:
-      calc(
-        var(--header-height) +
-        env(safe-area-inset-top) +
-        26px
-      );
-  }
+.compact-section-heading h2 {font-size: 2.15rem;}
 
-  .gifts-content .gifts-lead {
-    margin-top: 16px;
-  }
+.timeline-event {min-height: 83px;}
 
-  .gifts-content p {
-    margin-top: 13px;
-  }
+.timeline-symbol {width: 29px;height: 29px;}
 
-  .gift-button {
-    margin-top: 18px;
-  }
+.timeline-symbol svg {width: 16px;height: 16px;}
 
-  .rsvp-section {
-    height:
+.timeline-copy h3 {font-size: .82rem;}
+
+.program-card {min-height: 170px;}
+
+.information-card {min-height: 187px;}
+
+.gifts-content p {margin-top: 14px;
+
+font-size: .8rem;
+
+}
+
+.gifts-content .gifts-lead {margin-top: 17px;
+
+font-size: .94rem;
+
+}
+
+.gift-button {margin-top: 18px;}
+
+}/* =========================================================TRYGG BUNNSONE FOR SEKSJONSLENKER PÅ MOBILSørger for at "fortsett"-knappene alltid er synligeover Safari sin nederste nettleserbar========================================================= */
+
+@media (max-width: 760px) {
+
+ {--mobile-browser-clearance: 92px;}
+
+.screen-section {min-height: 100svh;
+
+padding-bottom:
+  calc(
+    var(--mobile-browser-clearance) +
+    env(safe-area-inset-bottom)
+  );
+
+}
+
+.screen-section .section-jump {position: absolute;left: 50%;bottom:calc(var(--mobile-browser-clearance) +env(safe-area-inset-bottom));
+
+margin: 0;
+padding: 0;
+
+transform: translateX(-50%);
+
+white-space: nowrap;
+
+}
+
+/* Gir plass til lenken uten at innholdet overlapper den */
+
+.story-section .editorial-timeline,.program-section .program-grid,.practical-section .information-grid {margin-bottom: 42px;}
+
+.gifts-section .gifts-content {margin-bottom: 48px;}
+
+.rsvp-section {padding-bottom:calc(var(--mobile-browser-clearance) +env(safe-area-inset-bottom));}
+
+.rsvp-section .rsvp-card {margin-bottom: 46px;}
+
+}
+
+/* Litt mindre sikkerhetsavstand på korte skjermer */
+
+@media (max-width: 760px) and (max-height: 800px) {
+
+ {--mobile-browser-clearance: 78px;}
+
+.story-section .editorial-timeline,.program-section .program-grid,.practical-section .information-grid {margin-bottom: 32px;}
+
+.gifts-section .gifts-content,.rsvp-section .rsvp-card {margin-bottom: 36px;}
+
+}/* =========================================================KORRIGERING AV GAVEØNSKER, RSVP OG FOOTERDenne blokken skal ligge HELT NEDERST i style.css========================================================= */
+
+@media (max-width: 760px) {
+
+/* ---------------------------------------------------------GAVEØNSKERFlytter hele innholdet tydelig opp, men beholder"Fortsett til RSVP" synlig over Safari-linjen.--------------------------------------------------------- */
+
+.gifts-section {position: relative;
+
+min-height: 100svh;
+
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+
+padding-top:
+  calc(
+    var(--header-height) +
+    env(safe-area-inset-top) +
+    54px
+  );
+
+padding-right: 18px;
+
+padding-bottom:
+  calc(
+    104px +
+    env(safe-area-inset-bottom)
+  );
+
+padding-left: 18px;
+
+}
+
+.gifts-section .gifts-content {width: 100%;max-width: 760px;
+
+margin: 0 auto;
+margin-bottom: 0;
+
+transform: none;
+
+}
+
+.gifts-content .section-label {margin-top: 0;margin-bottom: 12px;}
+
+.gifts-content h2 {margin-top: 0;}
+
+.gifts-content .gifts-lead {margin-top: 25px;}
+
+.gifts-content p {margin-top: 20px;}
+
+.gift-button {margin-top: 27px;}
+
+.gift-link-note {margin-top: 15px;}
+
+.gifts-section .section-jump {position: absolute;
+
+left: 50%;
+bottom:
+  calc(
+    84px +
+    env(safe-area-inset-bottom)
+  );
+
+width: max-content;
+
+margin: 0;
+padding: 0;
+
+transform: translateX(-50%);
+
+color: var(--paper-light);
+
+}
+
+/* ---------------------------------------------------------RSVP + FOOTERRSVP blir kortere slik at footeren med navnene kommermed på samme skjermbilde.--------------------------------------------------------- */
+
+.rsvp-section {position: relative;
+
+min-height: 0;
+height:
+  calc(
+    100svh -
+    var(--header-height) -
+    270px
+  );
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+
+padding-top:
+  calc(
+    env(safe-area-inset-top) +
+    18px
+  );
+
+padding-right: 18px;
+
+padding-bottom: 52px;
+
+padding-left: 18px;
+
+}
+
+.rsvp-section .rsvp-card {width: 100%;max-width: 760px;
+
+margin: 0 auto;
+
+padding:
+  clamp(38px, 6.5vh, 58px)
+  22px;
+
+transform: none;
+
+}
+
+.rsvp-card .section-label {margin-bottom: 8px;}
+
+.rsvp-card h2 {margin-top: 0;
+
+font-size:
+  clamp(
+    3.6rem,
+    15vw,
+    5rem
+  );
+
+}
+
+.rsvp-card > p(.section-label) {margin:23px auto27px;
+
+max-width: 540px;
+
+}
+
+.rsvp-section .section-jump {position: absolute;
+
+left: 50%;
+bottom: 13px;
+
+width: max-content;
+
+margin: 0;
+padding: 0;
+
+transform: translateX(-50%);
+
+}
+
+/* Footeren trekkes direkte opp under RSVP */
+
+.site-footer {min-height: 270px;height: 270px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+margin: 0;
+
+padding:
+  30px 20px
+  calc(
+    30px +
+    env(safe-area-inset-bottom)
+  );
+
+}
+
+.site-footer::before {width: min(580px, 76vw);
+
+margin-bottom: 28px;
+
+}
+
+/* Sørger for korrekt landing når RSVP-ikonet trykkes */
+
+#rsvp {scroll-margin-top: var(--header-height);}
+
+}
+
+/* =========================================================LAVERE MOBILSKJERMERFor eksempel mindre iPhone-modeller========================================================= */
+
+@media (max-width: 760px) and (max-height: 800px) {
+
+.gifts-section {padding-top:calc(var(--header-height) +env(safe-area-inset-top) +26px);}
+
+.gifts-content .gifts-lead {margin-top: 16px;}
+
+.gifts-content p {margin-top: 13px;}
+
+.gift-button {margin-top: 18px;}
+
+.rsvp-section {height:calc(100svh -var(--header-height) -230px);
+
+padding-top: 8px;
+padding-bottom: 42px;
+
+}
+
+.rsvp-section .rsvp-card {padding:28px20px;}
+
+.rsvp-card > p(.section-label) {margin:16px auto20px;}
+
+.site-footer {min-height: 230px;height: 230px;}
+
+}/* =========================================================DESKTOP: ALLE KAPITLER SOM SIDER I DET SAMME KORTETPåvirker kun skjermer bredere enn 760 px.Mobilvisningen beholdes uendret.========================================================= */
+
+@media (min-width: 761px) {
+
+ {--desktop-card-width: min(1040px, calc(100vw - 120px));--desktop-card-height: min(700px, calc(100svh - var(--header-height) - 82px));--desktop-card-border: rgba(76, 55, 47, 0.18);--desktop-card-shadow:0 24px 60px rgba(49, 37, 31, 0.08);}
+
+body {background:radial-gradient(circle at 50% 30%,rgba(255, 255, 255, 0.72),rgba(248, 244, 238, 0.88) 55%,rgba(242, 237, 230, 0.94) 100%);}
+
+main {background: transparent;}
+
+/* Felles oppsett for hvert kapittel */
+
+.story-section,.program-section,.practical-section,.gifts-section {position: relative;
+
+width: var(--desktop-card-width);
+height: var(--desktop-card-height);
+min-height: 560px;
+
+margin:
+  calc(var(--header-height) + 38px)
+  auto
+  42px;
+
+padding:
+  clamp(34px, 4vh, 52px)
+  clamp(42px, 5vw, 74px)
+  clamp(52px, 6vh, 76px);
+
+overflow: hidden;
+
+background: var(--paper-light);
+
+border: 1px solid var(--desktop-card-border);
+
+box-shadow: var(--desktop-card-shadow);
+
+isolation: isolate;
+
+}
+
+/* Dobbel, diskré kortkant */
+
+.story-section::before,.program-section::before,.practical-section::before,.gifts-section::before {content: "";
+
+position: absolute;
+inset: 10px;
+
+z-index: -1;
+
+border: 1px solid rgba(76, 55, 47, 0.13);
+
+pointer-events: none;
+
+}
+
+/* Sørger for riktig landing under den faste toppbaren */
+
+#historien,#program,#praktisk,#gaveonsker,#rsvp {scroll-margin-top:calc(var(--header-height) +28px);}
+
+/* Felles overskrifter */
+
+.story-section .compact-section-heading,.program-section .compact-section-heading,.practical-section .compact-section-heading {margin:0 autoclamp(18px, 2.5vh, 30px);
+
+text-align: center;
+
+}
+
+.story-section .compact-section-heading h2,.program-section .compact-section-heading h2,.practical-section .compact-section-heading h2 {margin: 0;
+
+font-size:
+  clamp(
+    3.25rem,
+    5.2vw,
+    5.8rem
+  );
+
+line-height: 0.92;
+
+}
+
+/* Hurtiglenken nederst på hvert kort */
+
+.story-section .section-jump,.program-section .section-jump,.practical-section .section-jump,.gifts-section .section-jump {position: absolute;
+
+left: 50%;
+bottom: 20px;
+
+z-index: 5;
+
+margin: 0;
+padding: 0;
+
+transform: translateX(-50%);
+
+white-space: nowrap;
+
+}
+
+/* =====================================================HISTORIEN===================================================== */
+
+.story-section {display: flex;flex-direction: column;justify-content: flex-start;}
+
+.story-section .compact-section-heading {margin-bottom: 22px;}
+
+.editorial-timeline {width: 100%;max-width: none;
+
+margin: 0 auto;
+
+display: grid;
+grid-template-columns:
+  repeat(
+    4,
+    minmax(0, 1fr)
+  );
+
+column-gap: 24px;
+row-gap: 0;
+
+}
+
+.editorial-timeline::before {display: none;}
+
+.timeline-event {min-height: 118px;
+
+padding:
+  16px
+  4px;
+
+grid-template-columns:
+  44px
+  minmax(0, 1fr);
+
+gap: 13px;
+
+border-top: 1px solid var(--line);
+border-bottom: 1px solid var(--line);
+
+background: transparent;
+
+}
+
+.timeline-event(n + 5) {border-top: 0;}
+
+.timeline-copy h3 {font-size:clamp(1.15rem,1.6vw,1.55rem);}
+
+/* =====================================================PROGRAM===================================================== */
+
+.program-section {display: flex;flex-direction: column;justify-content: flex-start;
+
+background: var(--blush);
+
+}
+
+.program-grid {width: 100%;flex: 1;
+
+display: grid;
+grid-template-columns:
+  repeat(
+    4,
+    minmax(0, 1fr)
+  );
+
+margin: 0 auto 36px;
+
+}
+
+.program-card {min-height: 0;height: 100%;
+
+padding:
+  clamp(24px, 3vh, 38px)
+  clamp(18px, 2vw, 30px);
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+border-top: 1px solid var(--line-dark);
+border-bottom: 1px solid var(--line-dark);
+border-left: 1px solid var(--line-dark);
+
+}
+
+.program-card {border-right: 1px solid var(--line-dark);}
+
+/* =====================================================PRAKTISK INFORMASJON===================================================== */
+
+.practical-section {display: flex;flex-direction: column;justify-content: flex-start;}
+
+.information-grid {width: 100%;flex: 1;
+
+display: grid;
+grid-template-columns:
+  repeat(
+    4,
+    minmax(0, 1fr)
+  );
+
+margin: 0 auto 36px;
+
+}
+
+.information-card {min-height: 0;height: 100%;
+
+padding:
+  clamp(28px, 4vh, 46px)
+  clamp(18px, 2.2vw, 34px);
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+border-top: 1px solid var(--line-dark);
+border-bottom: 1px solid var(--line-dark);
+border-left: 1px solid var(--line-dark);
+
+text-align: center;
+
+}
+
+.information-card {border-right: 1px solid var(--line-dark);}
+
+/* =====================================================GAVEØNSKERBurgunderfargen ligger inne i kortet.===================================================== */
+
+.gifts-section {display: flex;flex-direction: column;align-items: center;justify-content: center;
+
+color: var(--paper-light);
+background: var(--burgundy);
+
+}
+
+.gifts-section::before {border-color: rgba(255, 248, 242, 0.22);}
+
+.gifts-content {width: min(760px, 86%);
+
+margin:
+  0 auto
+  34px;
+
+text-align: center;
+
+}
+
+.gifts-content h2 {margin: 0;
+
+font-size:
+  clamp(
+    3.8rem,
+    6vw,
+    6.6rem
+  );
+
+line-height: 0.92;
+
+}
+
+.gifts-content .gifts-lead {margin-top: 30px;}
+
+.gifts-content p {margin-top: 22px;}
+
+.gift-button {width: min(570px, 100%);
+
+margin:
+  30px auto
+  0;
+
+}
+
+.gifts-section .section-jump {color: var(--paper-light);}
+
+/* =====================================================RSVP OG FOOTER SOM ETT SAMLET KORT===================================================== */
+
+.rsvp-section {position: relative;
+
+width: var(--desktop-card-width);
+height:
+  calc(
+    var(--desktop-card-height) - 190px
+  );
+
+min-height: 410px;
+
+margin:
+  calc(var(--header-height) + 38px)
+  auto
+  0;
+
+padding:
+  22px
+  22px
+  42px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+background: var(--paper-light);
+
+border:
+  1px solid
+  var(--desktop-card-border);
+
+border-bottom: 0;
+
+box-shadow:
+  0 20px 60px
+  rgba(49, 37, 31, 0.08);
+
+}
+
+.rsvp-section::before {content: "";
+
+position: absolute;
+inset:
+  10px
+  10px
+  0;
+
+border:
+  1px solid
+  rgba(76, 55, 47, 0.13);
+
+border-bottom: 0;
+
+pointer-events: none;
+
+}
+
+.rsvp-card {width:calc(100% - 42px);
+
+height:
+  calc(
+    100% - 30px
+  );
+
+margin: 0;
+
+padding:
+  clamp(42px, 6vh, 70px)
+  clamp(40px, 7vw, 100px);
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+background: var(--blush);
+
+border:
+  1px solid
+  rgba(111, 51, 65, 0.22);
+
+box-shadow: none;
+
+}
+
+.rsvp-card h2 {font-size:clamp(4.6rem,7vw,7.2rem);
+
+line-height: 0.9;
+
+}
+
+.rsvp-section .section-jump {display: none;}
+
+/* Footeren kobles direkte til RSVP-kortet */
+
+.site-footer {position: relative;
+
+width: var(--desktop-card-width);
+height: 190px;
+min-height: 190px;
+
+margin:
+  0 auto
+  42px;
+
+padding:
+  25px
+  30px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+background: var(--paper);
+
+border:
+  1px solid
+  var(--desktop-card-border);
+
+border-top:
+  1px solid
+  var(--line);
+
+box-shadow:
+  0 24px 60px
+  rgba(49, 37, 31, 0.08);
+
+}
+
+.site-footer::before {content: "";
+
+position: absolute;
+inset:
+  0
+  10px
+  10px;
+
+width: auto;
+height: auto;
+
+margin: 0;
+
+background: transparent;
+
+border:
+  1px solid
+  rgba(76, 55, 47, 0.13);
+
+border-top: 0;
+
+pointer-events: none;
+
+}
+
+.site-footer .footer-name,.site-footer h2,.site-footer h3 {position: relative;z-index: 2;}
+
+/* =====================================================SVÆRT BREDE SKJERMERKortet skal fortsatt føles stort og lesbart.===================================================== */
+
+@media (min-width: 1500px) {
+
+:root {
+  --desktop-card-width:
+    min(
+      1120px,
+      calc(100vw - 220px)
+    );
+
+  --desktop-card-height:
+    min(
+      740px,
       calc(
         100svh -
         var(--header-height) -
-        230px
-      );
+        88px
+      )
+    );
+}
 
-    padding-top: 8px;
-    padding-bottom: 42px;
-  }
-
-  .rsvp-section .rsvp-card {
-    padding:
-      28px
-      20px;
-  }
-
-  .rsvp-card > p:not(.section-label) {
-    margin:
-      16px auto
-      20px;
-  }
-
-  .site-footer {
-    min-height: 230px;
-    height: 230px;
-  }
+}
 
 }
