@@ -1,760 +1,276 @@
-:root {
-  --ivory: #faf7f2;
-  --warm-white: #f5f1ea;
-  --charcoal: #2f2b27;
-  --champagne: #d8bd8a;
-  --bronze: #92785f;
-  --white: #ffffff;
-
-  --header-height: 92px;
-  --content-width: 1280px;
-
-  --ease: cubic-bezier(.22, 1, .36, 1);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  color: var(--charcoal);
-  background: var(--ivory);
-  font-family: "Montserrat", sans-serif;
-  font-weight: 300;
-}
-
-body.menu-open {
-  overflow: hidden;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font: inherit;
-}
-
-.sr-only {
-  position: absolute;
-
-  width: 1px;
-  height: 1px;
-
-  padding: 0;
-  margin: -1px;
-
-  overflow: hidden;
-
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-
-  border: 0;
-}
-
-
-/* Header */
-
-.site-header {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 20;
-
-  height: var(--header-height);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 clamp(24px, 4vw, 72px);
-
-  color: var(--white);
-
-  transition:
-    height .45s var(--ease),
-    background-color .45s var(--ease),
-    backdrop-filter .45s var(--ease),
-    box-shadow .45s var(--ease);
-}
-
-.site-header.scrolled {
-  height: 72px;
-
-  background: rgba(28, 26, 24, .56);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  box-shadow: 0 1px 0 rgba(255, 255, 255, .12);
-}
-
-.wordmark {
-  position: relative;
-  z-index: 30;
-
-  font-family: "Cormorant Garamond", serif;
-  font-size: clamp(1rem, 1.35vw, 1.35rem);
-
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.wordmark span {
-  color: var(--champagne);
-  font-style: italic;
-}
-
-.main-navigation {
-  display: flex;
-  align-items: center;
-
-  gap: clamp(24px, 3vw, 58px);
-}
-
-.main-navigation a {
-  position: relative;
-
-  padding: 12px 0;
-
-  font-size: .68rem;
-  font-weight: 400;
-
-  letter-spacing: .18em;
-  text-transform: uppercase;
-}
-
-.main-navigation a::after {
-  content: "";
-
-  position: absolute;
-  left: 50%;
-  bottom: 4px;
-
-  width: 0;
-  height: 1px;
-
-  background: currentColor;
-
-  transform: translateX(-50%);
-
-  transition: width .35s var(--ease);
-}
-
-.main-navigation a:hover::after,
-.main-navigation a:focus-visible::after,
-.main-navigation a.active::after {
-  width: 72%;
-}
-
-.menu-toggle {
-  display: none;
-
-  position: relative;
-  z-index: 30;
-
-  width: 42px;
-  height: 42px;
-
-  padding: 0;
-
-  border: 0;
-  background: transparent;
-  color: inherit;
-
-  cursor: pointer;
-}
-
-.menu-toggle span:not(.sr-only) {
-  position: absolute;
-  left: 9px;
-
-  width: 24px;
-  height: 1px;
-
-  background: currentColor;
-
-  transition:
-    transform .35s var(--ease),
-    top .35s var(--ease);
-}
-
-.menu-toggle span:nth-child(2) {
-  top: 16px;
-}
-
-.menu-toggle span:nth-child(3) {
-  top: 25px;
-}
-
-.menu-toggle[aria-expanded="true"] span:nth-child(2) {
-  top: 21px;
-  transform: rotate(45deg);
-}
-
-.menu-toggle[aria-expanded="true"] span:nth-child(3) {
-  top: 21px;
-  transform: rotate(-45deg);
-}
-
-
-/* Hero */
-
-.hero {
-  position: relative;
-
-  min-height: 100svh;
-
-  overflow: hidden;
-
-  display: grid;
-  align-items: center;
-
-  color: var(--white);
-
-  isolation: isolate;
-}
-
-.hero-background {
-  position: absolute;
-  inset: -4%;
-  z-index: -3;
-
-  background:
-    url("../assets/hero.png")
-    center 48% / cover
-    no-repeat;
-
-  transform: scale(1.04);
-
-  filter: blur(9px);
-
-  animation:
-    heroFocus 1.7s var(--ease) .1s forwards;
-
-  will-change: transform;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(14, 13, 12, .56) 0%,
-      rgba(14, 13, 12, .27) 42%,
-      rgba(14, 13, 12, .12) 75%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(16, 15, 14, .26) 0%,
-      rgba(16, 15, 14, .02) 48%,
-      rgba(10, 9, 9, .78) 100%
-    );
-}
-
-.hero-content {
-  width: min(88vw, var(--content-width));
-
-  margin: 0 auto;
-
-  padding-top:
-    calc(var(--header-height) + 48px);
-
-  padding-bottom: 130px;
-
-  opacity: 0;
-
-  transform: translateY(24px);
-
-  animation:
-    contentIn 1.25s var(--ease) .55s forwards;
-}
-
-.hero-date,
-.hero-location {
-  margin: 0;
-
-  font-size: clamp(.66rem, .9vw, .88rem);
-  font-weight: 400;
-
-  letter-spacing: .34em;
-  text-transform: uppercase;
-}
-
-.hero-intro {
-  margin: 18px 0 0;
-
-  font-family: "Cormorant Garamond", serif;
-  font-size: clamp(1.75rem, 3vw, 3.35rem);
-  font-style: italic;
-  font-weight: 400;
-
-  line-height: 1.18;
-  letter-spacing: .06em;
-
-  text-wrap: balance;
-}
-
-.ornament {
-  display: flex;
-  align-items: center;
-
-  gap: 18px;
-
-  width: min(290px, 70vw);
-
-  margin: 34px 0 30px 32px;
-
-  color: var(--champagne);
-}
-
-.ornament > span:not(.heart) {
-  flex: 1;
-
-  height: 1px;
-
-  background: currentColor;
-
-  opacity: .55;
-}
-
-.ornament .heart {
-  font-size: 1.8rem;
-  line-height: 1;
-}
-
-.hero-title {
-  max-width: 700px;
-
-  margin: 0;
-
-  font-family: "Cormorant Garamond", serif;
-  font-size: clamp(4.4rem, 8.5vw, 9.2rem);
-  font-weight: 500;
-
-  line-height: .76;
-  letter-spacing: -.035em;
-}
-
-.hero-title span {
-  display: block;
-}
-
-.hero-title em {
-  display: block;
-
-  margin: .04em 0 .04em 1.05em;
-
-  color: var(--champagne);
-
-  font-size: .72em;
-  font-weight: 400;
-
-  line-height: .62;
-}
-
-.hero-location {
-  margin-top: 52px;
-  padding-left: 14px;
-}
-
-.hero-location span {
-  margin: 0 14px;
-
-  color: var(--champagne);
-}
-
-.scroll-cue {
-  position: absolute;
-  left: 50%;
-  bottom: 32px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: 15px;
-
-  color: var(--white);
-
-  transform: translateX(-50%);
-
-  font-size: .66rem;
-  font-weight: 400;
-
-  letter-spacing: .34em;
-  text-transform: uppercase;
-
-  opacity: 0;
-
-  animation:
-    contentIn 1s var(--ease) 1.15s forwards;
-}
-
-.scroll-cue i {
-  position: relative;
-
-  display: block;
-
-  width: 1px;
-  height: 46px;
-
-  background: rgba(255, 255, 255, .7);
-
-  animation:
-    scrollLine 2s ease-in-out infinite;
-}
-
-.scroll-cue i::before,
-.scroll-cue i::after {
-  content: "";
-
-  position: absolute;
-  bottom: 0;
-
-  width: 13px;
-  height: 1px;
-
-  background: currentColor;
-}
-
-.scroll-cue i::before {
-  right: 0;
-
-  transform: rotate(45deg);
-  transform-origin: right center;
-}
-
-.scroll-cue i::after {
-  left: 0;
-
-  transform: rotate(-45deg);
-  transform-origin: left center;
-}
-
-
-/* Midlertidige seksjoner */
-
-.placeholder-section {
-  min-height: 72vh;
-
-  display: grid;
-  place-items: center;
-
-  padding: 120px 24px;
-
-  background: var(--ivory);
-}
-
-.placeholder-section.alt {
-  background: var(--warm-white);
-}
-
-.section-inner {
-  width: min(760px, 100%);
-
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 18px;
-
-  color: var(--bronze);
-
-  font-size: .7rem;
-  font-weight: 500;
-
-  letter-spacing: .3em;
-  text-transform: uppercase;
-}
-
-.placeholder-section h2 {
-  margin: 0 0 20px;
-
-  font-family: "Cormorant Garamond", serif;
-  font-size: clamp(3.2rem, 7vw, 6.3rem);
-  font-weight: 400;
-
-  line-height: .95;
-}
-
-.placeholder-section p:last-child {
-  max-width: 620px;
-
-  margin: 0 auto;
-
-  font-size: 1rem;
-  line-height: 1.9;
-}
-
-
-/* Animasjoner */
-
-@keyframes heroFocus {
-  from {
-    filter: blur(9px);
-    transform: scale(1.07);
+/* =========================================================
+   KORRIGERING AV GAVEØNSKER, RSVP OG FOOTER
+   Denne blokken skal ligge HELT NEDERST i style.css
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  /* ---------------------------------------------------------
+     GAVEØNSKER
+     Flytter hele innholdet tydelig opp, men beholder
+     "Fortsett til RSVP" synlig over Safari-linjen.
+     --------------------------------------------------------- */
+
+  .gifts-section {
+    position: relative;
+
+    min-height: 100svh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    padding-top:
+      calc(
+        var(--header-height) +
+        env(safe-area-inset-top) +
+        54px
+      );
+
+    padding-right: 18px;
+
+    padding-bottom:
+      calc(
+        104px +
+        env(safe-area-inset-bottom)
+      );
+
+    padding-left: 18px;
   }
 
-  to {
-    filter: blur(0);
-    transform: scale(1.025);
-  }
-}
+  .gifts-section .gifts-content {
+    width: 100%;
+    max-width: 760px;
 
-@keyframes contentIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    margin: 0 auto;
+    margin-bottom: 0;
 
-@keyframes scrollLine {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: .55;
+    transform: none;
   }
 
-  50% {
-    transform: translateY(8px);
-    opacity: 1;
-  }
-}
-
-
-/* Nettbrett og mobil */
-
-@media (max-width: 900px) {
-
-  .site-header {
-    height: 76px;
-    padding: 0 22px;
+  .gifts-content .section-label {
+    margin-top: 0;
+    margin-bottom: 12px;
   }
 
-  .site-header.scrolled {
-    height: 66px;
+  .gifts-content h2 {
+    margin-top: 0;
   }
 
-  .wordmark {
-    font-size: 1rem;
-    letter-spacing: .2em;
+  .gifts-content .gifts-lead {
+    margin-top: 25px;
   }
 
-  .menu-toggle {
-    display: block;
+  .gifts-content p {
+    margin-top: 20px;
   }
 
-  .main-navigation {
-    position: fixed;
-    inset: 0;
-    z-index: 25;
+  .gift-button {
+    margin-top: 27px;
+  }
+
+  .gift-link-note {
+    margin-top: 15px;
+  }
+
+  .gifts-section .section-jump {
+    position: absolute;
+
+    left: 50%;
+    bottom:
+      calc(
+        84px +
+        env(safe-area-inset-bottom)
+      );
+
+    width: max-content;
+
+    margin: 0;
+    padding: 0;
+
+    transform: translateX(-50%);
+
+    color: var(--paper-light);
+  }
+
+
+  /* ---------------------------------------------------------
+     RSVP + FOOTER
+     RSVP blir kortere slik at footeren med navnene kommer
+     med på samme skjermbilde.
+     --------------------------------------------------------- */
+
+  .rsvp-section {
+    position: relative;
+
+    min-height: 0;
+    height:
+      calc(
+        100svh -
+        var(--header-height) -
+        270px
+      );
 
     display: flex;
     flex-direction: column;
     justify-content: center;
 
-    gap: 28px;
+    padding-top:
+      calc(
+        env(safe-area-inset-top) +
+        18px
+      );
 
-    padding: 100px 24px 50px;
+    padding-right: 18px;
 
-    background: rgba(28, 25, 23, .96);
+    padding-bottom: 52px;
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transform: translateY(-16px);
-
-    transition:
-      opacity .35s var(--ease),
-      visibility .35s var(--ease),
-      transform .35s var(--ease);
+    padding-left: 18px;
   }
 
-  .main-navigation.open {
-    opacity: 1;
-    visibility: visible;
+  .rsvp-section .rsvp-card {
+    width: 100%;
+    max-width: 760px;
 
-    transform: translateY(0);
+    margin: 0 auto;
+
+    padding:
+      clamp(38px, 6.5vh, 58px)
+      22px;
+
+    transform: none;
   }
 
-  .main-navigation a {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 2rem;
-
-    letter-spacing: .05em;
-    text-transform: none;
+  .rsvp-card .section-label {
+    margin-bottom: 8px;
   }
 
-  .hero-background {
-    background-position: 58% center;
-  }
+  .rsvp-card h2 {
+    margin-top: 0;
 
-  .hero-content {
-    width: min(88vw, 680px);
-
-    padding-top: 118px;
-    padding-bottom: 140px;
-  }
-
-  .hero-date {
-    letter-spacing: .23em;
-  }
-
-  .hero-intro {
-    max-width: 520px;
-
-    margin-top: 15px;
-
-    line-height: 1.12;
-  }
-
-  .ornament {
-    width: 210px;
-
-    margin: 28px 0 26px 10px;
-  }
-
-  .hero-title {
-    font-size: clamp(4.1rem, 16vw, 7.4rem);
-    line-height: .78;
-  }
-
-  .hero-title em {
-    margin-left: .7em;
-  }
-
-  .hero-location {
-    margin-top: 42px;
-    padding-left: 4px;
-
-    letter-spacing: .2em;
-  }
-}
-
-
-/* Små mobilskjermer */
-
-@media (max-width: 560px) {
-
-  .hero {
-    min-height: 100svh;
-  }
-
-  .hero-background {
-    inset: -2%;
-
-    background-position: 64% center;
-  }
-
-  .hero-overlay {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(14, 13, 12, .47),
-        rgba(14, 13, 12, .14)
-      ),
-      linear-gradient(
-        180deg,
-        rgba(16, 15, 14, .33) 0%,
-        rgba(16, 15, 14, .06) 44%,
-        rgba(9, 8, 8, .82) 100%
+    font-size:
+      clamp(
+        3.6rem,
+        15vw,
+        5rem
       );
   }
 
-  .hero-content {
-    align-self: end;
+  .rsvp-card > p:not(.section-label) {
+    margin:
+      23px auto
+      27px;
 
-    padding-top: 130px;
-    padding-bottom: 122px;
+    max-width: 540px;
   }
 
-  .hero-date {
-    font-size: .58rem;
+  .rsvp-section .section-jump {
+    position: absolute;
+
+    left: 50%;
+    bottom: 13px;
+
+    width: max-content;
+
+    margin: 0;
+    padding: 0;
+
+    transform: translateX(-50%);
   }
 
-  .hero-intro {
-    font-size: clamp(1.55rem, 7.5vw, 2.15rem);
 
-    letter-spacing: .025em;
+  /* Footeren trekkes direkte opp under RSVP */
+
+  .site-footer {
+    min-height: 270px;
+    height: 270px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0;
+
+    padding:
+      30px 20px
+      calc(
+        30px +
+        env(safe-area-inset-bottom)
+      );
   }
 
-  .hero-intro br {
-    display: none;
+  .site-footer::before {
+    width: min(580px, 76vw);
+
+    margin-bottom: 28px;
   }
 
-  .ornament {
-    width: 170px;
 
-    margin: 24px 0 22px;
+  /* Sørger for korrekt landing når RSVP-ikonet trykkes */
+
+  #rsvp {
+    scroll-margin-top: var(--header-height);
   }
 
-  .ornament .heart {
-    font-size: 1.4rem;
-  }
-
-  .hero-title {
-    font-size: clamp(4rem, 21vw, 6.2rem);
-
-    line-height: .77;
-  }
-
-  .hero-title em {
-    margin-left: .55em;
-  }
-
-  .hero-location {
-    margin-top: 36px;
-
-    font-size: .55rem;
-  }
-
-  .hero-location span {
-    margin: 0 8px;
-  }
-
-  .scroll-cue {
-    bottom: 18px;
-
-    gap: 9px;
-
-    font-size: .55rem;
-  }
-
-  .scroll-cue i {
-    height: 30px;
-  }
 }
 
 
-/* Redusert bevegelse */
+/* =========================================================
+   LAVERE MOBILSKJERMER
+   For eksempel mindre iPhone-modeller
+   ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 760px) and (max-height: 800px) {
 
-  html {
-    scroll-behavior: auto;
+  .gifts-section {
+    padding-top:
+      calc(
+        var(--header-height) +
+        env(safe-area-inset-top) +
+        26px
+      );
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-
-    scroll-behavior: auto !important;
-
-    transition-duration: .01ms !important;
+  .gifts-content .gifts-lead {
+    margin-top: 16px;
   }
+
+  .gifts-content p {
+    margin-top: 13px;
+  }
+
+  .gift-button {
+    margin-top: 18px;
+  }
+
+  .rsvp-section {
+    height:
+      calc(
+        100svh -
+        var(--header-height) -
+        230px
+      );
+
+    padding-top: 8px;
+    padding-bottom: 42px;
+  }
+
+  .rsvp-section .rsvp-card {
+    padding:
+      28px
+      20px;
+  }
+
+  .rsvp-card > p:not(.section-label) {
+    margin:
+      16px auto
+      20px;
+  }
+
+  .site-footer {
+    min-height: 230px;
+    height: 230px;
+  }
+
 }
