@@ -1905,36 +1905,1158 @@ const createDesktopPageControls = () => {
 createDesktopPageControls();
 /*
   ==================================================
-  MOBIL V2: VERTIKAL SCROLLING
+  MOBIL: SVEIP MELLOM INVITASJONSSIDENE
+  Kun skjermer opptil 760 px.
   ==================================================
 */
 
-const mobileScrollMedia =
+const mobilePageMedia =
   window.matchMedia("(max-width: 760px)");
 
-const mobileReopenInvitationButton =
-  document.querySelector(
-    "[data-mobile-reopen-invitation]"
-  );
+const mobilePageIds = [
+  "invitasjon",
+  "historien",
+  "program",
+  "praktisk",
+  "gaveonsker",
+  "rsvp"
+];
+
+let activeMobilePageId =
+  "invitasjon";
+
+let mobileSwipePointerId = null;
+
+let mobileSwipeStartX = 0;
+let mobileSwipeStartY = 0;
+let mobileSwipeCurrentX = 0;
+let mobileSwipeStartTime = 0;
+
+let mobileSwipeDirectionLocked = false;
+let mobileSwipeIsHorizontal = false;
+let mobileSwipeIsDragging = false;
+
+let mobileSwipeWidth =
+  window.innerWidth;
+
+let mobileFirstInvitationSwipe =
+  true;
 
 
 /*
-  ÅPNE INVITASJONEN FRA HAMBURGERMENYEN
+  HENT MOBILSIDE
 */
 
-if (mobileReopenInvitationButton) {
+const getMobilePage = (
+  pageId
+) => {
 
-  mobileReopenInvitationButton.addEventListener(
-    "click",
-    () => {
+  return document.getElementById(
+    pageId
+  );
 
-      if (!mobileScrollMedia.matches) {
+};
+
+
+const getMobilePageIndex = (
+  pageId
+) => {
+
+  return mobilePageIds.indexOf(
+    pageId
+  );
+
+};
+
+
+const cleanMobilePageId = (
+  hash
+) => {
+
+  const pageId =
+    String(hash || "")
+      .replace(/^#/, "");
+
+  if (
+    mobilePageIds.includes(pageId)
+  ) {
+    return pageId;
+  }
+
+  return "invitasjon";
+
+};
+
+
+/*
+  SVEIPEILLUSTRASJON
+*/
+
+const createMobileSwipeHint = () => {
+
+  const existingHint =
+    document.querySelector(
+      "[data-mobile-swipe-hint]"
+    );
+
+  if (existingHint) {
+    return existingHint;
+  }
+
+  const hint =
+    document.createElement("div");
+
+  hint.className =
+    "mobile-swipe-hint";
+
+  hint.setAttribute(
+    "data-mobile-swipe-hint",
+    ""
+  );
+
+  hint.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  hint.innerHTML = `
+    <span class="mobile-swipe-hint-left">‹</span>
+
+    <span class="mobile-swipe-hint-line">
+      <i></i>
+    </span>
+
+    <span class="mobile-swipe-hint-right">›</span>
+
+    <small>Sveip</small>
+  `;
+
+  body.appendChild(hint);
+
+  return hint;
+
+};
+
+
+const mobileSwipeHint =
+  createMobileSwipeHint();
+
+
+const updateMobileSwipeHint = () => {
+
+  if (
+    !mobilePageMedia.matches ||
+    !mobileSwipeHint
+  ) {
+    return;
+  }
+
+  const currentIndex =
+    getMobilePageIndex(
+      activeMobilePageId
+    );
+
+  mobileSwipeHint.classList.toggle(
+    "no-previous",
+    currentIndex === 0
+  );
+
+  mobileSwipeHint.classList.toggle(
+    "no-next",
+    currentIndex ===
+      mobilePageIds.length - 1
+  );
+
+  mobileSwipeHint.classList.toggle(
+    "visible",
+    body.classList.contains(
+      "invitation-open"
+    )
+  );
+
+};
+
+
+/*
+  PLASSERING AV SIDENE
+*/
+
+const setMobilePagePosition = (
+  page,
+  position,
+  dragOffset = 0
+) => {
+
+  if (!page) {
+    return;
+  }
+
+  page.style.setProperty(
+    "--mobile-page-position",
+    position
+  );
+
+  page.style.setProperty(
+    "--mobile-drag-offset",
+    `${dragOffset}px`
+  );
+
+};
+
+
+const resetMobilePageInlineStyles = () => {
+
+  mobilePageIds.forEach(
+    (pageId) => {
+
+      const page =
+        getMobilePage(pageId);
+
+      if (!page) {
         return;
       }
 
-      closeMenu();
+      page.style.removeProperty(
+        "--mobile-page-position"
+      );
 
-      closeInvitation();
+      page.style.removeProperty(
+        "--mobile-drag-offset"
+      );
+
+      page.classList.remove(
+        "mobile-page-active",
+        "mobile-page-before",
+        "mobile-page-after",
+        "mobile-page-dragging"
+      );
+
+      page.removeAttribute(
+        "aria-hidden"
+      );
+
+    }
+  );
+
+};
+
+
+const updateMobilePageClasses = (
+  activePageId
+) => {
+
+  const activeIndex =
+    getMobilePageIndex(
+      activePageId
+    );
+
+  mobilePageIds.forEach(
+    (pageId, pageIndex) => {
+
+      const page =
+        getMobilePage(pageId);
+
+      if (!page) {
+        return;
+      }
+
+      page.classList.remove(
+        "mobile-page-active",
+        "mobile-page-before",
+        "mobile-page-after",
+        "mobile-page-dragging"
+      );
+
+      page.style.removeProperty(
+        "--mobile-drag-offset"
+      );
+
+      if (
+        pageId === activePageId
+      ) {
+
+        page.classList.add(
+          "mobile-page-active"
+        );
+
+        setMobilePagePosition(
+          page,
+          0
+        );
+
+        page.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      } else if (
+        pageIndex < activeIndex
+      ) {
+
+        page.classList.add(
+          "mobile-page-before"
+        );
+
+        setMobilePagePosition(
+          page,
+          -1
+        );
+
+        page.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+      } else {
+
+        page.classList.add(
+          "mobile-page-after"
+        );
+
+        setMobilePagePosition(
+          page,
+          1
+        );
+
+        page.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+      }
+
+    }
+  );
+
+};
+
+
+/*
+  VIS MOBILSIDE
+*/
+
+const showMobilePage = (
+  pageId,
+  options = {}
+) => {
+
+  if (!mobilePageMedia.matches) {
+    return;
+  }
+
+  const {
+    updateHash = true,
+    animate = true
+  } = options;
+
+  const nextPageId =
+    cleanMobilePageId(pageId);
+
+  const nextPage =
+    getMobilePage(nextPageId);
+
+  if (!nextPage) {
+    return;
+  }
+
+  if (
+    nextPageId !== "invitasjon" &&
+    body.classList.contains(
+      "invitation-closed"
+    )
+  ) {
+
+    openInvitation();
+
+  }
+
+  if (!animate) {
+
+    body.classList.add(
+      "mobile-page-no-animation"
+    );
+
+  }
+
+  activeMobilePageId =
+    nextPageId;
+
+  body.classList.add(
+    "mobile-page-mode"
+  );
+
+  body.classList.remove(
+    "mobile-page-dragging",
+    "mobile-page-drag-left",
+    "mobile-page-drag-right"
+  );
+
+  body.classList.toggle(
+    "mobile-page-dark",
+    nextPageId === "gaveonsker"
+  );
+
+  updateMobilePageClasses(
+    activeMobilePageId
+  );
+
+  setActiveNavigation(
+    activeMobilePageId
+  );
+
+  updateMobileSwipeHint();
+
+  if (
+    updateHash &&
+    window.history &&
+    window.history.replaceState
+  ) {
+
+    window.history.replaceState(
+      null,
+      "",
+      `#${activeMobilePageId}`
+    );
+
+  }
+
+  if (!animate) {
+
+    window.requestAnimationFrame(
+      () => {
+
+        window.requestAnimationFrame(
+          () => {
+
+            body.classList.remove(
+              "mobile-page-no-animation"
+            );
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+};
+
+
+/*
+  OPPSTART
+*/
+
+const initializeMobilePages = () => {
+
+  if (!mobilePageMedia.matches) {
+
+    body.classList.remove(
+      "mobile-page-mode",
+      "mobile-page-no-animation",
+      "mobile-page-dragging",
+      "mobile-page-drag-left",
+      "mobile-page-drag-right",
+      "mobile-page-dark"
+    );
+
+    resetMobilePageInlineStyles();
+
+    mobileSwipeHint?.classList.remove(
+      "visible"
+    );
+
+    return;
+  }
+
+  mobileSwipeWidth =
+    window.innerWidth;
+
+  const initialPageId =
+    body.classList.contains(
+      "invitation-closed"
+    )
+      ? "invitasjon"
+      : cleanMobilePageId(
+          window.location.hash
+        );
+
+  showMobilePage(
+    initialPageId,
+    {
+      updateHash: false,
+      animate: false
+    }
+  );
+
+  updateMobileSwipeHint();
+
+};
+
+
+/*
+  NABOSIDER
+*/
+
+const getMobileNeighbourPages = () => {
+
+  const currentIndex =
+    getMobilePageIndex(
+      activeMobilePageId
+    );
+
+  return {
+    current:
+      getMobilePage(
+        activeMobilePageId
+      ),
+
+    previous:
+      currentIndex > 0
+        ? getMobilePage(
+            mobilePageIds[
+              currentIndex - 1
+            ]
+          )
+        : null,
+
+    next:
+      currentIndex <
+      mobilePageIds.length - 1
+        ? getMobilePage(
+            mobilePageIds[
+              currentIndex + 1
+            ]
+          )
+        : null
+  };
+
+};
+
+
+/*
+  KORTET FØLGER FINGEREN
+*/
+
+const updateMobileDrag = (
+  dragOffset
+) => {
+
+  const {
+    current,
+    previous,
+    next
+  } = getMobileNeighbourPages();
+
+  if (!current) {
+    return;
+  }
+
+  const limitedOffset =
+    Math.max(
+      -mobileSwipeWidth,
+      Math.min(
+        mobileSwipeWidth,
+        dragOffset
+      )
+    );
+
+  current.classList.add(
+    "mobile-page-dragging"
+  );
+
+  current.style.setProperty(
+    "--mobile-drag-offset",
+    `${limitedOffset}px`
+  );
+
+  if (
+    limitedOffset < 0 &&
+    next
+  ) {
+
+    next.classList.add(
+      "mobile-page-dragging"
+    );
+
+    next.style.setProperty(
+      "--mobile-drag-offset",
+      `${limitedOffset}px`
+    );
+
+    body.classList.add(
+      "mobile-page-drag-left"
+    );
+
+    body.classList.remove(
+      "mobile-page-drag-right"
+    );
+
+  } else if (
+    limitedOffset > 0 &&
+    previous
+  ) {
+
+    previous.classList.add(
+      "mobile-page-dragging"
+    );
+
+    previous.style.setProperty(
+      "--mobile-drag-offset",
+      `${limitedOffset}px`
+    );
+
+    body.classList.add(
+      "mobile-page-drag-right"
+    );
+
+    body.classList.remove(
+      "mobile-page-drag-left"
+    );
+
+  }
+
+};
+
+
+/*
+  AVSLUTT SVEIP
+
+  Normal sveip:
+  minst 24 % av skjermbredden.
+
+  Rask sveip:
+  minst 52 px og tydelig hastighet.
+*/
+
+const finishMobileSwipe = (
+  dragOffset
+) => {
+
+  const currentIndex =
+    getMobilePageIndex(
+      activeMobilePageId
+    );
+
+  const elapsedTime =
+    Math.max(
+      performance.now() -
+      mobileSwipeStartTime,
+      1
+    );
+
+  const velocity =
+    Math.abs(dragOffset) /
+    elapsedTime;
+
+  const distanceThreshold =
+    Math.min(
+      mobileSwipeWidth * .24,
+      118
+    );
+
+  const fastSwipeDistance =
+    52;
+
+  const fastSwipeVelocity =
+    .72;
+
+  const movedFarEnough =
+    Math.abs(dragOffset) >=
+    distanceThreshold;
+
+  const movedFastEnough =
+    Math.abs(dragOffset) >=
+      fastSwipeDistance &&
+    velocity >=
+      fastSwipeVelocity;
+
+  let targetIndex =
+    currentIndex;
+
+  if (
+    movedFarEnough ||
+    movedFastEnough
+  ) {
+
+    if (dragOffset < 0) {
+
+      targetIndex =
+        Math.min(
+          currentIndex + 1,
+          mobilePageIds.length - 1
+        );
+
+    } else if (
+      dragOffset > 0
+    ) {
+
+      targetIndex =
+        Math.max(
+          currentIndex - 1,
+          0
+        );
+
+    }
+
+  }
+
+  const changedPage =
+    targetIndex !== currentIndex;
+
+  body.classList.remove(
+    "mobile-page-dragging",
+    "mobile-page-drag-left",
+    "mobile-page-drag-right"
+  );
+
+  mobilePageIds.forEach(
+    (pageId) => {
+
+      const page =
+        getMobilePage(pageId);
+
+      if (!page) {
+        return;
+      }
+
+      page.classList.remove(
+        "mobile-page-dragging"
+      );
+
+      page.style.removeProperty(
+        "--mobile-drag-offset"
+      );
+
+    }
+  );
+
+  if (changedPage) {
+
+    const previousPageId =
+      activeMobilePageId;
+
+    const nextPageId =
+      mobilePageIds[targetIndex];
+
+    if (
+      previousPageId ===
+        "invitasjon" &&
+      mobileFirstInvitationSwipe
+    ) {
+
+      body.classList.add(
+        "mobile-first-page-turn"
+      );
+
+      mobileFirstInvitationSwipe =
+        false;
+
+      window.setTimeout(
+        () => {
+
+          body.classList.remove(
+            "mobile-first-page-turn"
+          );
+
+        },
+        620
+      );
+
+    }
+
+    showMobilePage(
+      nextPageId
+    );
+
+  } else {
+
+    updateMobilePageClasses(
+      activeMobilePageId
+    );
+
+  }
+
+};
+
+
+/*
+  START SVEIP
+*/
+
+const startMobileSwipe = (
+  event
+) => {
+
+  if (
+    !mobilePageMedia.matches ||
+    !body.classList.contains(
+      "mobile-page-mode"
+    ) ||
+    body.classList.contains(
+      "invitation-closed"
+    ) ||
+    body.classList.contains(
+      "modal-open"
+    ) ||
+    body.classList.contains(
+      "menu-open"
+    )
+  ) {
+    return;
+  }
+
+  if (
+    event.pointerType === "mouse" &&
+    event.button !== 0
+  ) {
+    return;
+  }
+
+  const interactiveElement =
+    event.target.closest(
+      [
+        "button",
+        "a",
+        "input",
+        "textarea",
+        "select",
+        "label"
+      ].join(",")
+    );
+
+  if (interactiveElement) {
+    return;
+  }
+
+  mobileSwipePointerId =
+    event.pointerId;
+
+  mobileSwipeStartX =
+    event.clientX;
+
+  mobileSwipeStartY =
+    event.clientY;
+
+  mobileSwipeCurrentX =
+    event.clientX;
+
+  mobileSwipeStartTime =
+    performance.now();
+
+  mobileSwipeDirectionLocked =
+    false;
+
+  mobileSwipeIsHorizontal =
+    false;
+
+  mobileSwipeIsDragging =
+    false;
+
+};
+
+
+/*
+  FLYTT SVEIP
+*/
+
+const moveMobileSwipe = (
+  event
+) => {
+
+  if (
+    event.pointerId !==
+    mobileSwipePointerId
+  ) {
+    return;
+  }
+
+  const deltaX =
+    event.clientX -
+    mobileSwipeStartX;
+
+  const deltaY =
+    event.clientY -
+    mobileSwipeStartY;
+
+  mobileSwipeCurrentX =
+    event.clientX;
+
+  if (
+    !mobileSwipeDirectionLocked
+  ) {
+
+    if (
+      Math.abs(deltaX) < 10 &&
+      Math.abs(deltaY) < 10
+    ) {
+      return;
+    }
+
+    mobileSwipeDirectionLocked =
+      true;
+
+    mobileSwipeIsHorizontal =
+      Math.abs(deltaX) >
+      Math.abs(deltaY) * 1.3;
+
+  }
+
+  if (!mobileSwipeIsHorizontal) {
+    return;
+  }
+
+  const currentIndex =
+    getMobilePageIndex(
+      activeMobilePageId
+    );
+
+  const hasPrevious =
+    currentIndex > 0;
+
+  const hasNext =
+    currentIndex <
+    mobilePageIds.length - 1;
+
+  let adjustedDeltaX =
+    deltaX;
+
+  if (
+    deltaX > 0 &&
+    !hasPrevious
+  ) {
+
+    adjustedDeltaX =
+      deltaX * .16;
+
+  }
+
+  if (
+    deltaX < 0 &&
+    !hasNext
+  ) {
+
+    adjustedDeltaX =
+      deltaX * .16;
+
+  }
+
+  mobileSwipeIsDragging =
+    true;
+
+  body.classList.add(
+    "mobile-page-dragging"
+  );
+
+  event.preventDefault();
+
+  updateMobileDrag(
+    adjustedDeltaX
+  );
+
+};
+
+
+/*
+  SLIPP SVEIP
+*/
+
+const endMobileSwipe = (
+  event
+) => {
+
+  if (
+    event.pointerId !==
+    mobileSwipePointerId
+  ) {
+    return;
+  }
+
+  const dragOffset =
+    mobileSwipeCurrentX -
+    mobileSwipeStartX;
+
+  if (
+    mobileSwipeIsDragging &&
+    mobileSwipeIsHorizontal
+  ) {
+
+    finishMobileSwipe(
+      dragOffset
+    );
+
+  }
+
+  mobileSwipePointerId = null;
+
+  mobileSwipeDirectionLocked =
+    false;
+
+  mobileSwipeIsHorizontal =
+    false;
+
+  mobileSwipeIsDragging =
+    false;
+
+};
+
+
+document.addEventListener(
+  "pointerdown",
+  startMobileSwipe,
+  {
+    passive: true
+  }
+);
+
+
+document.addEventListener(
+  "pointermove",
+  moveMobileSwipe,
+  {
+    passive: false
+  }
+);
+
+
+document.addEventListener(
+  "pointerup",
+  endMobileSwipe,
+  {
+    passive: true
+  }
+);
+
+
+document.addEventListener(
+  "pointercancel",
+  endMobileSwipe,
+  {
+    passive: true
+  }
+);
+
+
+/*
+  TOPPIKONER OG HASH-LENKER
+*/
+
+document.addEventListener(
+  "click",
+  (event) => {
+
+    if (
+      !mobilePageMedia.matches ||
+      !body.classList.contains(
+        "mobile-page-mode"
+      )
+    ) {
+      return;
+    }
+
+    const link =
+      event.target.closest(
+        'a[href^="#"]'
+      );
+
+    if (!link) {
+      return;
+    }
+
+    const href =
+      link.getAttribute("href");
+
+    const targetPageId =
+      cleanMobilePageId(href);
+
+    if (
+      !mobilePageIds.includes(
+        targetPageId
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    event.stopImmediatePropagation();
+
+    closeMenu();
+
+    showMobilePage(
+      targetPageId
+    );
+
+  },
+  true
+);
+
+
+/*
+  ÅPNE INVITASJON
+*/
+
+if (openInvitationButton) {
+
+  openInvitationButton.addEventListener(
+    "click",
+    () => {
+
+      if (!mobilePageMedia.matches) {
+        return;
+      }
+
+      window.setTimeout(
+        () => {
+
+          showMobilePage(
+            "invitasjon",
+            {
+              updateHash: true,
+              animate: false
+            }
+          );
+
+          updateMobileSwipeHint();
+
+        },
+        40
+      );
+
+    }
+  );
+
+}
+
+
+/*
+  GÅ TILBAKE TIL SEGLET
+*/
+
+if (reopenInvitationButton) {
+
+  reopenInvitationButton.addEventListener(
+    "click",
+    () => {
+
+      if (!mobilePageMedia.matches) {
+        return;
+      }
+
+      activeMobilePageId =
+        "invitasjon";
+
+      updateMobilePageClasses(
+        "invitasjon"
+      );
+
+      mobileSwipeHint?.classList.remove(
+        "visible"
+      );
+
+      body.classList.remove(
+        "mobile-page-dark"
+      );
 
       if (
         window.history &&
@@ -1956,79 +3078,115 @@ if (mobileReopenInvitationButton) {
 
 
 /*
-  RYDD OPP GAMLE MOBILKLASSER
-
-  Dette sørger for at ingen rester fra
-  sveipeløsningen påvirker scrollingen.
+  NETTLESERENS TILBAKEKNAPP
 */
 
-const removeOldMobilePageClasses = () => {
+window.addEventListener(
+  "hashchange",
+  () => {
 
-  const pageIds = [
-    "invitasjon",
-    "historien",
-    "program",
-    "praktisk",
-    "gaveonsker",
-    "rsvp"
-  ];
-
-  body.classList.remove(
-    "mobile-page-mode",
-    "mobile-page-no-animation",
-    "mobile-page-dragging",
-    "mobile-page-drag-left",
-    "mobile-page-drag-right",
-    "mobile-page-dark",
-    "mobile-first-page-turn"
-  );
-
-  pageIds.forEach((pageId) => {
-
-    const page =
-      document.getElementById(pageId);
-
-    if (!page) {
+    if (
+      !mobilePageMedia.matches ||
+      !body.classList.contains(
+        "mobile-page-mode"
+      )
+    ) {
       return;
     }
 
-    page.classList.remove(
-      "mobile-page-active",
-      "mobile-page-before",
-      "mobile-page-after",
-      "mobile-page-dragging"
+    showMobilePage(
+      cleanMobilePageId(
+        window.location.hash
+      ),
+      {
+        updateHash: false
+      }
     );
 
-    page.style.removeProperty(
-      "--mobile-page-position"
-    );
-
-    page.style.removeProperty(
-      "--mobile-drag-offset"
-    );
-
-    page.removeAttribute(
-      "aria-hidden"
-    );
-
-  });
-
-  const oldSwipeHint =
-    document.querySelector(
-      "[data-mobile-swipe-hint]"
-    );
-
-  if (oldSwipeHint) {
-    oldSwipeHint.remove();
   }
-
-};
-
-
-removeOldMobilePageClasses();
-
-
-mobileScrollMedia.addEventListener(
-  "change",
-  removeOldMobilePageClasses
 );
+
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    if (!mobilePageMedia.matches) {
+      return;
+    }
+
+    mobileSwipeWidth =
+      window.innerWidth;
+
+  }
+);
+
+
+mobilePageMedia.addEventListener(
+  "change",
+  initializeMobilePages
+);
+
+
+initializeMobilePages();
+/*
+  ==================================================
+  MOBIL: SE INVITASJONEN FRA HAMBURGERMENYEN
+  ==================================================
+*/
+
+const mobileReopenInvitationButton =
+  document.querySelector(
+    "[data-mobile-reopen-invitation]"
+  );
+
+
+if (mobileReopenInvitationButton) {
+
+  mobileReopenInvitationButton.addEventListener(
+    "click",
+    () => {
+
+      if (!mobilePageMedia.matches) {
+        return;
+      }
+
+      closeMenu();
+
+      activeMobilePageId =
+        "invitasjon";
+
+      updateMobilePageClasses(
+        "invitasjon"
+      );
+
+      body.classList.remove(
+        "mobile-page-dark",
+        "mobile-page-dragging",
+        "mobile-page-drag-left",
+        "mobile-page-drag-right"
+      );
+
+      closeInvitation();
+
+      mobileSwipeHint?.classList.remove(
+        "visible"
+      );
+
+      if (
+        window.history &&
+        window.history.replaceState
+      ) {
+
+        window.history.replaceState(
+          null,
+          "",
+          "#invitasjon"
+        );
+
+      }
+
+    }
+  );
+
+}
