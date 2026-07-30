@@ -1905,7 +1905,7 @@ const createDesktopPageControls = () => {
 createDesktopPageControls();
 /*
   ==================================================
-  MOBIL: SVEIP MELLOM INVITASJONSSIDENE
+  MOBIL: VERTIKALT BLA MELLOM INVITASJONSSIDENE
   Kun skjermer opptil 760 px.
   ==================================================
 */
@@ -1929,18 +1929,15 @@ let mobileSwipePointerId = null;
 
 let mobileSwipeStartX = 0;
 let mobileSwipeStartY = 0;
-let mobileSwipeCurrentX = 0;
+let mobileSwipeCurrentY = 0;
 let mobileSwipeStartTime = 0;
 
 let mobileSwipeDirectionLocked = false;
-let mobileSwipeIsHorizontal = false;
+let mobileSwipeIsVertical = false;
 let mobileSwipeIsDragging = false;
 
-let mobileSwipeWidth =
-  window.innerWidth;
-
-let mobileFirstInvitationSwipe =
-  true;
+let mobileSwipeHeight =
+  window.innerHeight;
 
 
 /*
@@ -1989,96 +1986,7 @@ const cleanMobilePageId = (
 
 
 /*
-  SVEIPEILLUSTRASJON
-*/
-
-const createMobileSwipeHint = () => {
-
-  const existingHint =
-    document.querySelector(
-      "[data-mobile-swipe-hint]"
-    );
-
-  if (existingHint) {
-    return existingHint;
-  }
-
-  const hint =
-    document.createElement("div");
-
-  hint.className =
-    "mobile-swipe-hint";
-
-  hint.setAttribute(
-    "data-mobile-swipe-hint",
-    ""
-  );
-
-  hint.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-  hint.innerHTML = `
-    <span class="mobile-swipe-hint-left">‹</span>
-
-    <span class="mobile-swipe-hint-line">
-      <i></i>
-    </span>
-
-    <span class="mobile-swipe-hint-right">›</span>
-
-    <small>Sveip</small>
-  `;
-
-  body.appendChild(hint);
-
-  return hint;
-
-};
-
-
-const mobileSwipeHint =
-  createMobileSwipeHint();
-
-
-const updateMobileSwipeHint = () => {
-
-  if (
-    !mobilePageMedia.matches ||
-    !mobileSwipeHint
-  ) {
-    return;
-  }
-
-  const currentIndex =
-    getMobilePageIndex(
-      activeMobilePageId
-    );
-
-  mobileSwipeHint.classList.toggle(
-    "no-previous",
-    currentIndex === 0
-  );
-
-  mobileSwipeHint.classList.toggle(
-    "no-next",
-    currentIndex ===
-      mobilePageIds.length - 1
-  );
-
-  mobileSwipeHint.classList.toggle(
-    "visible",
-    body.classList.contains(
-      "invitation-open"
-    )
-  );
-
-};
-
-
-/*
-  PLASSERING AV SIDENE
+  PLASSERING AV MOBILSIDENE
 */
 
 const setMobilePagePosition = (
@@ -2232,7 +2140,7 @@ const updateMobilePageClasses = (
 
 
 /*
-  VIS MOBILSIDE
+  VIS VALGT MOBILSIDE
 */
 
 const showMobilePage = (
@@ -2287,8 +2195,8 @@ const showMobilePage = (
 
   body.classList.remove(
     "mobile-page-dragging",
-    "mobile-page-drag-left",
-    "mobile-page-drag-right"
+    "mobile-page-drag-up",
+    "mobile-page-drag-down"
   );
 
   body.classList.toggle(
@@ -2303,8 +2211,6 @@ const showMobilePage = (
   setActiveNavigation(
     activeMobilePageId
   );
-
-  updateMobileSwipeHint();
 
   if (
     updateHash &&
@@ -2355,22 +2261,18 @@ const initializeMobilePages = () => {
       "mobile-page-mode",
       "mobile-page-no-animation",
       "mobile-page-dragging",
-      "mobile-page-drag-left",
-      "mobile-page-drag-right",
+      "mobile-page-drag-up",
+      "mobile-page-drag-down",
       "mobile-page-dark"
     );
 
     resetMobilePageInlineStyles();
 
-    mobileSwipeHint?.classList.remove(
-      "visible"
-    );
-
     return;
   }
 
-  mobileSwipeWidth =
-    window.innerWidth;
+  mobileSwipeHeight =
+    window.innerHeight;
 
   const initialPageId =
     body.classList.contains(
@@ -2388,8 +2290,6 @@ const initializeMobilePages = () => {
       animate: false
     }
   );
-
-  updateMobileSwipeHint();
 
 };
 
@@ -2435,7 +2335,7 @@ const getMobileNeighbourPages = () => {
 
 
 /*
-  KORTET FØLGER FINGEREN
+  KORTET FØLGER FINGEREN VERTIKALT
 */
 
 const updateMobileDrag = (
@@ -2454,9 +2354,9 @@ const updateMobileDrag = (
 
   const limitedOffset =
     Math.max(
-      -mobileSwipeWidth,
+      -mobileSwipeHeight,
       Math.min(
-        mobileSwipeWidth,
+        mobileSwipeHeight,
         dragOffset
       )
     );
@@ -2485,11 +2385,11 @@ const updateMobileDrag = (
     );
 
     body.classList.add(
-      "mobile-page-drag-left"
+      "mobile-page-drag-up"
     );
 
     body.classList.remove(
-      "mobile-page-drag-right"
+      "mobile-page-drag-down"
     );
 
   } else if (
@@ -2507,11 +2407,11 @@ const updateMobileDrag = (
     );
 
     body.classList.add(
-      "mobile-page-drag-right"
+      "mobile-page-drag-down"
     );
 
     body.classList.remove(
-      "mobile-page-drag-left"
+      "mobile-page-drag-up"
     );
 
   }
@@ -2520,13 +2420,7 @@ const updateMobileDrag = (
 
 
 /*
-  AVSLUTT SVEIP
-
-  Normal sveip:
-  minst 24 % av skjermbredden.
-
-  Rask sveip:
-  minst 52 px og tydelig hastighet.
+  AVSLUTT VERTIKAL SVEIP
 */
 
 const finishMobileSwipe = (
@@ -2551,15 +2445,12 @@ const finishMobileSwipe = (
 
   const distanceThreshold =
     Math.min(
-      mobileSwipeWidth * .24,
-      118
+      mobileSwipeHeight * .15,
+      105
     );
 
-  const fastSwipeDistance =
-    52;
-
-  const fastSwipeVelocity =
-    .72;
+  const fastSwipeDistance = 45;
+  const fastSwipeVelocity = .55;
 
   const movedFarEnough =
     Math.abs(dragOffset) >=
@@ -2606,8 +2497,8 @@ const finishMobileSwipe = (
 
   body.classList.remove(
     "mobile-page-dragging",
-    "mobile-page-drag-left",
-    "mobile-page-drag-right"
+    "mobile-page-drag-up",
+    "mobile-page-drag-down"
   );
 
   mobilePageIds.forEach(
@@ -2633,40 +2524,8 @@ const finishMobileSwipe = (
 
   if (changedPage) {
 
-    const previousPageId =
-      activeMobilePageId;
-
-    const nextPageId =
-      mobilePageIds[targetIndex];
-
-    if (
-      previousPageId ===
-        "invitasjon" &&
-      mobileFirstInvitationSwipe
-    ) {
-
-      body.classList.add(
-        "mobile-first-page-turn"
-      );
-
-      mobileFirstInvitationSwipe =
-        false;
-
-      window.setTimeout(
-        () => {
-
-          body.classList.remove(
-            "mobile-first-page-turn"
-          );
-
-        },
-        620
-      );
-
-    }
-
     showMobilePage(
-      nextPageId
+      mobilePageIds[targetIndex]
     );
 
   } else {
@@ -2681,7 +2540,7 @@ const finishMobileSwipe = (
 
 
 /*
-  START SVEIP
+  START VERTIKAL SVEIP
 */
 
 const startMobileSwipe = (
@@ -2738,8 +2597,8 @@ const startMobileSwipe = (
   mobileSwipeStartY =
     event.clientY;
 
-  mobileSwipeCurrentX =
-    event.clientX;
+  mobileSwipeCurrentY =
+    event.clientY;
 
   mobileSwipeStartTime =
     performance.now();
@@ -2747,7 +2606,7 @@ const startMobileSwipe = (
   mobileSwipeDirectionLocked =
     false;
 
-  mobileSwipeIsHorizontal =
+  mobileSwipeIsVertical =
     false;
 
   mobileSwipeIsDragging =
@@ -2757,7 +2616,7 @@ const startMobileSwipe = (
 
 
 /*
-  FLYTT SVEIP
+  FLYTT VERTIKAL SVEIP
 */
 
 const moveMobileSwipe = (
@@ -2779,8 +2638,8 @@ const moveMobileSwipe = (
     event.clientY -
     mobileSwipeStartY;
 
-  mobileSwipeCurrentX =
-    event.clientX;
+  mobileSwipeCurrentY =
+    event.clientY;
 
   if (
     !mobileSwipeDirectionLocked
@@ -2796,13 +2655,13 @@ const moveMobileSwipe = (
     mobileSwipeDirectionLocked =
       true;
 
-    mobileSwipeIsHorizontal =
-      Math.abs(deltaX) >
-      Math.abs(deltaY) * 1.3;
+    mobileSwipeIsVertical =
+      Math.abs(deltaY) >
+      Math.abs(deltaX) * 1.15;
 
   }
 
-  if (!mobileSwipeIsHorizontal) {
+  if (!mobileSwipeIsVertical) {
     return;
   }
 
@@ -2818,26 +2677,26 @@ const moveMobileSwipe = (
     currentIndex <
     mobilePageIds.length - 1;
 
-  let adjustedDeltaX =
-    deltaX;
+  let adjustedDeltaY =
+    deltaY;
 
   if (
-    deltaX > 0 &&
+    deltaY > 0 &&
     !hasPrevious
   ) {
 
-    adjustedDeltaX =
-      deltaX * .16;
+    adjustedDeltaY =
+      deltaY * .16;
 
   }
 
   if (
-    deltaX < 0 &&
+    deltaY < 0 &&
     !hasNext
   ) {
 
-    adjustedDeltaX =
-      deltaX * .16;
+    adjustedDeltaY =
+      deltaY * .16;
 
   }
 
@@ -2851,14 +2710,14 @@ const moveMobileSwipe = (
   event.preventDefault();
 
   updateMobileDrag(
-    adjustedDeltaX
+    adjustedDeltaY
   );
 
 };
 
 
 /*
-  SLIPP SVEIP
+  SLIPP VERTIKAL SVEIP
 */
 
 const endMobileSwipe = (
@@ -2873,12 +2732,12 @@ const endMobileSwipe = (
   }
 
   const dragOffset =
-    mobileSwipeCurrentX -
-    mobileSwipeStartX;
+    mobileSwipeCurrentY -
+    mobileSwipeStartY;
 
   if (
     mobileSwipeIsDragging &&
-    mobileSwipeIsHorizontal
+    mobileSwipeIsVertical
   ) {
 
     finishMobileSwipe(
@@ -2892,7 +2751,7 @@ const endMobileSwipe = (
   mobileSwipeDirectionLocked =
     false;
 
-  mobileSwipeIsHorizontal =
+  mobileSwipeIsVertical =
     false;
 
   mobileSwipeIsDragging =
@@ -2938,7 +2797,7 @@ document.addEventListener(
 
 
 /*
-  TOPPIKONER OG HASH-LENKER
+  TOPPIKONER, MENY OG «FORTSETT»-LENKER
 */
 
 document.addEventListener(
@@ -2978,7 +2837,6 @@ document.addEventListener(
     }
 
     event.preventDefault();
-
     event.stopImmediatePropagation();
 
     closeMenu();
@@ -3017,8 +2875,6 @@ if (openInvitationButton) {
             }
           );
 
-          updateMobileSwipeHint();
-
         },
         40
       );
@@ -3030,7 +2886,7 @@ if (openInvitationButton) {
 
 
 /*
-  GÅ TILBAKE TIL SEGLET
+  TILBAKE TIL SEGLET
 */
 
 if (reopenInvitationButton) {
@@ -3050,12 +2906,11 @@ if (reopenInvitationButton) {
         "invitasjon"
       );
 
-      mobileSwipeHint?.classList.remove(
-        "visible"
-      );
-
       body.classList.remove(
-        "mobile-page-dark"
+        "mobile-page-dark",
+        "mobile-page-dragging",
+        "mobile-page-drag-up",
+        "mobile-page-drag-down"
       );
 
       if (
@@ -3078,7 +2933,7 @@ if (reopenInvitationButton) {
 
 
 /*
-  NETTLESERENS TILBAKEKNAPP
+  HASH-ENDRINGER
 */
 
 window.addEventListener(
@@ -3115,8 +2970,8 @@ window.addEventListener(
       return;
     }
 
-    mobileSwipeWidth =
-      window.innerWidth;
+    mobileSwipeHeight =
+      window.innerHeight;
 
   }
 );
@@ -3129,10 +2984,10 @@ mobilePageMedia.addEventListener(
 
 
 initializeMobilePages();
+
+
 /*
-  ==================================================
-  MOBIL: SE INVITASJONEN FRA HAMBURGERMENYEN
-  ==================================================
+  SE INVITASJONEN FRA HAMBURGERMENYEN
 */
 
 const mobileReopenInvitationButton =
@@ -3163,15 +3018,11 @@ if (mobileReopenInvitationButton) {
       body.classList.remove(
         "mobile-page-dark",
         "mobile-page-dragging",
-        "mobile-page-drag-left",
-        "mobile-page-drag-right"
+        "mobile-page-drag-up",
+        "mobile-page-drag-down"
       );
 
       closeInvitation();
-
-      mobileSwipeHint?.classList.remove(
-        "visible"
-      );
 
       if (
         window.history &&
