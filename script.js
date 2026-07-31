@@ -1905,6 +1905,152 @@ const createDesktopPageControls = () => {
 createDesktopPageControls();
 /*
   ==================================================
+  DESKTOP: BYTT SIDE MED MUSEHJULET
+  ==================================================
+*/
+
+let desktopWheelAccumulator = 0;
+let desktopWheelLocked = false;
+let desktopWheelResetTimer = null;
+
+
+const handleDesktopWheel = (event) => {
+
+  if (
+    !desktopPageMedia.matches ||
+    !body.classList.contains(
+      "desktop-page-mode"
+    ) ||
+    body.classList.contains(
+      "invitation-closed"
+    ) ||
+    body.classList.contains(
+      "modal-open"
+    ) ||
+    body.classList.contains(
+      "menu-open"
+    )
+  ) {
+    return;
+  }
+
+
+  const interactiveArea =
+    event.target.closest(
+      [
+        ".modal-panel",
+        "input",
+        "textarea",
+        "select"
+      ].join(",")
+    );
+
+
+  if (interactiveArea) {
+    return;
+  }
+
+
+  event.preventDefault();
+
+
+  if (desktopWheelLocked) {
+    return;
+  }
+
+
+  desktopWheelAccumulator +=
+    event.deltaY;
+
+
+  if (desktopWheelResetTimer) {
+
+    window.clearTimeout(
+      desktopWheelResetTimer
+    );
+
+  }
+
+
+  desktopWheelResetTimer =
+    window.setTimeout(
+      () => {
+
+        desktopWheelAccumulator = 0;
+
+      },
+      160
+    );
+
+
+  if (
+    Math.abs(
+      desktopWheelAccumulator
+    ) < 55
+  ) {
+    return;
+  }
+
+
+  const currentIndex =
+    getDesktopPageIndex(
+      activeDesktopPageId
+    );
+
+
+  const direction =
+    desktopWheelAccumulator > 0
+      ? 1
+      : -1;
+
+
+  const nextIndex =
+    Math.max(
+      0,
+      Math.min(
+        desktopPageIds.length - 1,
+        currentIndex + direction
+      )
+    );
+
+
+  desktopWheelAccumulator = 0;
+
+
+  if (nextIndex === currentIndex) {
+    return;
+  }
+
+
+  desktopWheelLocked = true;
+
+
+  showDesktopPage(
+    desktopPageIds[nextIndex]
+  );
+
+
+  window.setTimeout(
+    () => {
+
+      desktopWheelLocked = false;
+
+    },
+    650
+  );
+
+};
+
+
+document.addEventListener(
+  "wheel",
+  handleDesktopWheel,
+  {
+    passive: false
+  }
+);
+/*
+  ==================================================
   MOBIL: VERTIKALT BLA MELLOM INVITASJONSSIDENE
   Kun skjermer opptil 760 px.
   ==================================================
