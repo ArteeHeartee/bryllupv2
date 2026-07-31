@@ -1,23 +1,69 @@
 :root {
-  --paper: #f5f1ea;
-  --paper-light: #fbf8f3;
-  --paper-shadow: #ded5ca;
+  /*
+    GRUNNTONER
+    Varm ivory og myk blush
+  */
 
-  --espresso: #342822;
-  --espresso-soft: #68564c;
+  --paper: #f6f1ec;
+  --paper-light: #fcf8f5;
+  --paper-shadow: #e4d9d4;
 
-  --burgundy: #652f3b;
-  --burgundy-dark: #452027;
 
-  --blush: #d9b9b4;
-  --blush-light: #eee1de;
+  /*
+    TEKST
+    Varm brungrå i stedet for hard sort
+  */
 
-  --wax: #743442;
-  --wax-dark: #4d1f29;
-  --wax-light: #9a5360;
+  --espresso: #413632;
+  --espresso-soft: #74645f;
 
-  --line: rgba(52, 40, 34, .18);
-  --line-dark: rgba(52, 40, 34, .32);
+
+  /*
+    MAUVE
+    Hovedaksent for overskrifter, aktive valg og knapper
+  */
+
+  --burgundy: #8a5366;
+  --burgundy-dark: #684050;
+
+
+  /*
+    BLUSH
+    Myke bakgrunner og romantiske detaljer
+  */
+
+  --blush: #d7b5bf;
+  --blush-light: #f0e1e5;
+
+
+  /*
+    SAGE
+    Linjer, rammer, hover og sekundære detaljer
+  */
+
+  --sage: #a6aa83;
+  --sage-dark: #7f8462;
+  --sage-light: #e4e5d7;
+
+
+  /*
+    VOKSSEGL
+    Beholder litt mer dybde enn resten av paletten
+  */
+
+  --wax: #8a5366;
+  --wax-dark: #623b4a;
+  --wax-light: #b57b8d;
+
+
+  /*
+    LINJER
+    Sage-tonede i stedet for brungrå
+  */
+
+  --line: rgba(127, 132, 98, .24);
+  --line-dark: rgba(104, 64, 80, .30);
+
 
   --header-height: 72px;
   --content-width: 1220px;
