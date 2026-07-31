@@ -6618,3 +6618,32 @@ body.invitation-open .wax-seal {
   }
 
 }
+/* ==================================================
+   HISTORIEN VÅR: HØYERE BILDER PÅ DESKTOP
+================================================== */
+
+@media (min-width: 761px) {
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event {
+    grid-template-rows:
+      245px
+      minmax(52px, auto) !important;
+
+    min-height: 330px !important;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event > img {
+    width: 100% !important;
+    height: 245px !important;
+    min-height: 245px !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+}
