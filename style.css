@@ -6492,3 +6492,63 @@ body.invitation-open .wax-seal {
   }
 
 }
+
+
+/* ==================================================
+   HISTORIEN VÅR: RIKTIG STØRRELSE PÅ BILDENE
+================================================== */
+
+@media (min-width: 761px) {
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event {
+    grid-template-rows:
+      140px
+      minmax(44px, auto);
+
+    min-height: 250px;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-image {
+    grid-column: 1 / -1;
+
+    width: 100%;
+    height: 140px;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center;
+
+    border:
+      1px solid
+      rgba(101, 47, 59, .12);
+  }
+
+}
+
+
+@media (max-width: 760px) {
+
+  .story-section
+  .timeline-image {
+    grid-column: 1 / -1;
+
+    width: 100%;
+    height: 82px;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center;
+
+    border:
+      1px solid
+      rgba(101, 47, 59, .12);
+  }
+
+}
