@@ -5983,7 +5983,7 @@ body.invitation-open .wax-seal {
 
     overscroll-behavior: none;
 
-    touch-action: pan-y;
+    touch-action: none;
 
     opacity: 1;
     visibility: visible;
@@ -6880,10 +6880,3 @@ body.invitation-open .wax-seal {
     transform:
       translateY(-12px);
   }
-
-}
-@media (max-width: 760px) {
-  body.mobile-page-mode .mobile-page-active {
-    touch-action: pan-y !important;
-  }
-}
