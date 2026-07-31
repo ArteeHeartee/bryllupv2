@@ -2908,6 +2908,23 @@ const endMobileSwipe = (
   event
 ) => {
 
+  /*
+    Fjern fingeren fra listen når den løftes.
+    Dette må skje før vi kontrollerer hvilken
+    finger som startet selve sveipingen.
+  */
+
+  if (
+    event.pointerType === "touch"
+  ) {
+
+    mobileActivePointers.delete(
+      event.pointerId
+    );
+
+  }
+
+
   if (
     event.pointerId !==
     mobileSwipePointerId
@@ -2915,9 +2932,11 @@ const endMobileSwipe = (
     return;
   }
 
+
   const dragOffset =
     mobileSwipeCurrentY -
     mobileSwipeStartY;
+
 
   if (
     mobileSwipeIsDragging &&
@@ -2929,6 +2948,7 @@ const endMobileSwipe = (
     );
 
   }
+
 
   mobileSwipePointerId = null;
 
