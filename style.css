@@ -6647,3 +6647,65 @@ body.invitation-open .wax-seal {
   }
 
 }
+/* ==================================================
+   HISTORIEN VÅR: HOLD ALT INNE I RAMMEN
+================================================== */
+
+@media (min-width: 761px) {
+
+  body.desktop-page-mode
+  .story-section {
+    overflow: hidden !important;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .editorial-timeline {
+    height: 100%;
+    min-height: 0;
+
+    grid-template-rows:
+      repeat(2, minmax(0, 1fr));
+
+    overflow: hidden;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event {
+    min-height: 0 !important;
+    height: 100%;
+
+    grid-template-rows:
+      minmax(0, 1fr)
+      auto !important;
+
+    overflow: hidden;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event > img {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-symbol,
+  body.desktop-page-mode
+  .story-section
+  .timeline-copy {
+    align-self: center;
+  }
+
+}
