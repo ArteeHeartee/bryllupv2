@@ -6552,3 +6552,69 @@ body.invitation-open .wax-seal {
   }
 
 }
+
+/* ==================================================
+   HISTORIEN VÅR: TVING BILDENE TIL FULL STØRRELSE
+================================================== */
+
+@media (min-width: 761px) {
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event {
+    display: grid !important;
+
+    grid-template-columns:
+      44px
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      185px
+      minmax(48px, auto) !important;
+
+    min-height: 270px !important;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-event > img {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 185px !important;
+    min-height: 185px !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+
+    border:
+      1px solid
+      rgba(101, 47, 59, .12);
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-symbol {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+
+  body.desktop-page-mode
+  .story-section
+  .timeline-copy {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+
+}
