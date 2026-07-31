@@ -2081,6 +2081,8 @@ let mobileSwipeStartTime = 0;
 let mobileSwipeDirectionLocked = false;
 let mobileSwipeIsVertical = false;
 let mobileSwipeIsDragging = false;
+const mobileActivePointers =
+  new Set();
 
 let mobileSwipeHeight =
   window.innerHeight;
@@ -2692,7 +2694,36 @@ const finishMobileSwipe = (
 const startMobileSwipe = (
   event
 ) => {
+  
+  if (
+    event.pointerType === "touch"
+  ) {
 
+    mobileActivePointers.add(
+      event.pointerId
+    );
+
+
+    if (
+      mobileActivePointers.size > 1
+    ) {
+
+      mobileSwipePointerId = null;
+
+      mobileSwipeIsDragging =
+        false;
+
+      body.classList.remove(
+        "mobile-page-dragging",
+        "mobile-page-drag-up",
+        "mobile-page-drag-down"
+      );
+
+      return;
+
+    }
+
+  }
   if (
     !mobilePageMedia.matches ||
     !body.classList.contains(
@@ -2768,7 +2799,14 @@ const startMobileSwipe = (
 const moveMobileSwipe = (
   event
 ) => {
-
+  
+  if (
+    event.pointerType === "touch" &&
+    mobileActivePointers.size > 1
+  ) {
+    return;
+  }
+  
   if (
     event.pointerId !==
     mobileSwipePointerId
