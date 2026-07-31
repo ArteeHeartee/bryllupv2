@@ -684,9 +684,6 @@ body.invitation-open .invitation-interior {
 
   mix-blend-mode: multiply;
 
-  filter:
-    grayscale(1)
-    contrast(1.06);
 }
 
 
@@ -6754,4 +6751,64 @@ body.invitation-open .wax-seal {
     align-self: center;
   }
 
+}
+/* ==================================================
+   HARMONIEN: BEVAR AKVARELLFARGENE
+================================================== */
+
+.harmonien-illustration {
+  filter: none !important;
+
+  opacity: .96;
+
+  mix-blend-mode: multiply;
+
+  object-fit: contain;
+}
+/* ==================================================
+   NY PALETT: SAGE-DETALJER
+================================================== */
+
+.header-quick-navigation a {
+  color: var(--sage-dark);
+}
+
+
+.header-quick-navigation a:hover,
+.header-quick-navigation a:focus-visible {
+  color: var(--burgundy);
+
+  background:
+    rgba(215, 181, 191, .18);
+
+  border-color:
+    rgba(127, 132, 98, .34);
+}
+
+
+.header-quick-navigation a.active {
+  color: var(--paper-light);
+  background: var(--burgundy);
+
+  border-color: var(--burgundy);
+}
+
+
+.timeline-symbol,
+.history-icon,
+.program-icon {
+  color: var(--burgundy);
+
+  border-color:
+    rgba(127, 132, 98, .46);
+}
+
+
+.section-label {
+  color: var(--burgundy);
+}
+
+
+.section-jump {
+  color: var(--sage-dark);
 }
