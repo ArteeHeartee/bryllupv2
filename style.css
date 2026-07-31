@@ -5940,7 +5940,7 @@ body.invitation-open .wax-seal {
 
     overscroll-behavior: none;
 
-    touch-action: none;
+    touch-action: pinch-zoom;
 
     opacity: 1;
     visibility: visible;
