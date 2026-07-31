@@ -6812,3 +6812,73 @@ body.invitation-open .wax-seal {
 .section-jump {
   color: var(--sage-dark);
 }
+/* ==================================================
+   FORSIDE: RESPONSIV STØRRELSE PÅ HARMONIEN
+================================================== */
+
+@media (min-width: 761px) {
+
+  body.desktop-page-mode
+  .harmonien-illustration {
+    width:
+      clamp(
+        360px,
+        34vw,
+        600px
+      );
+
+    height:
+      clamp(
+        220px,
+        31vh,
+        360px
+      );
+
+    max-width: 100%;
+    max-height: 36vh;
+
+    margin:
+      0
+      auto
+      18px;
+
+    object-fit: contain;
+    object-position: center;
+
+    transform:
+      translateY(-24px);
+
+    filter: none !important;
+  }
+
+}
+@media
+  (min-width: 761px)
+  and
+  (max-height: 750px) {
+
+  body.desktop-page-mode
+  .harmonien-illustration {
+    width:
+      clamp(
+        300px,
+        29vw,
+        470px
+      );
+
+    height:
+      clamp(
+        175px,
+        25vh,
+        245px
+      );
+
+    max-height: 28vh;
+
+    margin-bottom: 8px;
+
+    transform:
+      translateY(-12px);
+  }
+
+}
